@@ -1,18 +1,24 @@
 import 'package:croupguardiandurgaprajapati/Authentication/login_screen.dart';
 import 'package:croupguardiandurgaprajapati/Screens/dashboard/dashboard_screen.dart';
+import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/viewmodels/diagnosis_viewmodel.dart';
 import 'package:croupguardiandurgaprajapati/firebase_options.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
   try{
     await Firebase.initializeApp(
-        options: DefaultFirebaseOptions.currentPlatform
+        options: DefaultFirebaseOptions.currentPlatform,
     );
-    runApp(const MyApp());
+    runApp(
+        ChangeNotifierProvider(
+          create: (_) => DiagnosisViewModel(
+          ),
+          child: const MyApp(),));
   }catch(e){
    SnackBar(content: Text("Firebase initialization error :$e"),);
   }

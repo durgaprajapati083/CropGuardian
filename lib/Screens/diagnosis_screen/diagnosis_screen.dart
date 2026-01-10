@@ -1,266 +1,205 @@
+import 'dart:io';
+import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/services/cloudinary_service.dart';
+import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/services/tts_service.dart';
+import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/viewmodels/diagnosis_viewmodel.dart';
 import 'package:flutter/material.dart';
+import 'package:image_picker/image_picker.dart';
+import 'package:provider/provider.dart';
+import 'package:speech_to_text/speech_to_text.dart';
 
-class DiagnosisScreen extends StatelessWidget {
+
+class DiagnosisScreen extends StatefulWidget {
   const DiagnosisScreen({super.key});
 
   @override
+  State<DiagnosisScreen> createState() => _DiagnosisScreenState();
+}
+
+class _DiagnosisScreenState extends State<DiagnosisScreen> {
+  final TextEditingController _descController = TextEditingController();
+  final SpeechToText _speech = SpeechToText();
+  bool _isListening = false;
+  String _language = 'English';
+
+  final ImagePicker _picker = ImagePicker();
+
+  /// PICK IMAGE + UPLOAD
+  Future<void> _pickImage(BuildContext context) async {
+    final picked = await _picker.pickImage(source: ImageSource.gallery);
+    if (picked == null) return;
+
+    final file = File(picked.path);
+
+    // Upload to Cloudinary
+    final imageUrl = await CloudinaryService.uploadImage(file);
+
+    context.read<DiagnosisViewModel>().setImage(file, imageUrl);
+  }
+
+  //Voice Method
+  Future<void> _listenVoice() async {
+    if (!_isListening) {
+      final available = await _speech.initialize();
+      if (!available) return;
+
+      setState(() => _isListening = true);
+
+      await _speech.listen(
+        localeId: _language == 'Hindi'
+            ? 'hi_IN'
+            : _language == 'Kannada'
+            ? 'kn_IN'
+            : 'en_IN',
+        onResult: (result) {
+          _descController.text = result.recognizedWords;
+        },
+      );
+    } else {
+      await _speech.stop();
+      setState(() => _isListening = false);
+    }
+  }
+
+  @override
   Widget build(BuildContext context) {
+    final vm = context.watch<DiagnosisViewModel>();
+
     return Scaffold(
-      backgroundColor: const Color(0xFFEFFAF5),
-      appBar: _buildAppBar(),
+      appBar: AppBar(title: const Text('CropGuardian')),
       body: SingleChildScrollView(
         padding: const EdgeInsets.all(16),
         child: Column(
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            _buildHeader(),
+
+            /// IMAGE UPLOAD BOX
+            GestureDetector(
+              onTap: () => _pickImage(context),
+              child: Container(
+                height: 180,
+                width: double.infinity,
+                decoration: BoxDecoration(
+                  border: Border.all(color: Colors.green, width: 1.5),
+                  borderRadius: BorderRadius.circular(12),
+                ),
+                child: vm.imageFile == null
+                    ? Column(
+                  mainAxisAlignment: MainAxisAlignment.center,
+                  children: const [
+                    Icon(Icons.upload, size: 40, color: Colors.green),
+                    SizedBox(height: 8),
+                    Text('Tap to upload crop image'),
+                    Text('PNG / JPG (max 5MB)',
+                        style: TextStyle(color: Colors.grey)),
+                  ],
+                )
+                    : ClipRRect(
+                  borderRadius: BorderRadius.circular(10),
+                  child: Image.file(
+                    vm.imageFile!,
+                    fit: BoxFit.cover,
+                    width: double.infinity,
+                  ),
+                ),
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// DESCRIPTION FIELD
+            TextField(
+              controller: _descController,
+              maxLines: 3,
+              decoration: const InputDecoration(
+                labelText: 'Describe crop issue (optional)',
+                border: OutlineInputBorder(),
+              ),
+            ),
+
+            // Mic Button
+            Align(
+              alignment: Alignment.centerRight,
+              child: IconButton(
+                icon: Icon(
+                  _isListening ? Icons.mic : Icons.mic_none,
+                  color: Colors.green,
+                ),
+                onPressed: _listenVoice,
+              ),
+            ),
+
+            const SizedBox(height: 16),
+
+            /// LANGUAGE SELECTOR
+            Row(
+              children: [
+                _languageButton('English'),
+                const SizedBox(width: 8),
+                _languageButton('Hindi'),
+                const SizedBox(width: 8),
+                _languageButton('Kannada'),
+              ],
+            ),
+
             const SizedBox(height: 20),
-            _buildUploadCard(),
-            const SizedBox(height: 16),
-            _buildDescriptionField(),
-            const SizedBox(height: 16),
-            _buildLanguageSelector(),
-            const SizedBox(height: 16),
-            _buildDiagnoseButton(),
-            const SizedBox(height: 32),
-            _buildDiagnosisResults(),
-            const SizedBox(height: 32),
-            _buildDiagnosisHistory(),
-            const SizedBox(height: 40),
-            _buildFooter(),
+
+            /// DIAGNOSE BUTTON
+            SizedBox(
+              width: double.infinity,
+              height: 48,
+              child: ElevatedButton(
+                onPressed: vm.isLoading || vm.uploadedImageUrl == null
+                    ? null
+                    : () {
+                  vm.diagnoseCrop(
+                    imageUrl: vm.uploadedImageUrl!,
+                    description: _descController.text,
+                    language: _language,
+                  );
+                },
+                child: vm.isLoading
+                    ? const CircularProgressIndicator(color: Colors.white)
+                    : const Text('Diagnose Crop'),
+              ),
+            ),
+
+            const SizedBox(height: 24),
+
+            /// RESULT
+            if (vm.result.isNotEmpty)
+              Card(
+                elevation: 2,
+                child: Padding(
+                  padding: const EdgeInsets.all(12),
+                  child: Text(vm.result),
+                ),
+              ),
+            IconButton(
+              icon: const Icon(Icons.volume_up, color: Colors.green),
+              onPressed: () {
+                TtsService.speak(vm.result, _language);
+              },
+            ),
+
           ],
         ),
       ),
     );
   }
 
-  // ---------------- APP BAR ----------------
-  AppBar _buildAppBar() {
-    return AppBar(
-      backgroundColor: const Color(0xFF0E7C66),
-      title: const Text('CropGuardian'),
-      // actions: const [
-      //   Padding(
-      //     padding: EdgeInsets.only(right: 12),
-      //     child: Icon(Icons.menu),
-      //   )
-      // ],
-    );
-  }
-
-  // ---------------- HEADER ----------------
-  Widget _buildHeader() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          'AI Crop Diagnosis',
-          style: TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 4),
-        Text(
-          'एआई फसल निदान\nUpload a photo of your crop for instant AI-powered analysis',
-          style: TextStyle(color: Colors.black54),
-        ),
-      ],
-    );
-  }
-
-  // ---------------- UPLOAD CARD ----------------
-  Widget _buildUploadCard() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          const Text(
-            'Upload Crop Image',
-            style: TextStyle(fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 8),
-          Container(
-            height: 160,
-            decoration: BoxDecoration(
-              border: Border.all(
-                color: Colors.green,
-                style: BorderStyle.solid,
-                width: 1.5,
-              ),
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: const Center(
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  Icon(Icons.upload, size: 40, color: Colors.green),
-                  SizedBox(height: 8),
-                  Text('Click to upload or drag and drop'),
-                  SizedBox(height: 4),
-                  Text(
-                    'PNG, JPG up to 5MB',
-                    style: TextStyle(color: Colors.black54),
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
-  // ---------------- DESCRIPTION FIELD ----------------
-  Widget _buildDescriptionField() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        const Text('Additional Description (Optional)'),
-        const SizedBox(height: 8),
-        TextField(
-          maxLines: 3,
-          decoration: InputDecoration(
-            hintText:
-            'Describe symptoms, location, weather conditions...',
-            border: OutlineInputBorder(
-              borderRadius: BorderRadius.circular(10),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ---------------- LANGUAGE SELECTOR ----------------
-  Widget _buildLanguageSelector() {
-    return Row(
-      children: [
-        _languageButton('English', true),
-        const SizedBox(width: 12),
-        _languageButton('हिंदी', false),
-      ],
-    );
-  }
-
-  Widget _languageButton(String text, bool selected) {
+  Widget _languageButton(String lang) {
     return Expanded(
-      child: Container(
-        height: 45,
-        decoration: BoxDecoration(
-          color: selected ? Colors.green : Colors.white,
-          borderRadius: BorderRadius.circular(8),
-          border: Border.all(color: Colors.green),
-        ),
-        child: Center(
-          child: Text(
-            text,
-            style: TextStyle(
-              color: selected ? Colors.white : Colors.green,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-        ),
-      ),
-    );
-  }
-
-  // ---------------- DIAGNOSE BUTTON ----------------
-  Widget _buildDiagnoseButton() {
-    return SizedBox(
-      width: double.infinity,
-      height: 50,
       child: ElevatedButton(
         style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
+          backgroundColor:
+          _language == lang ? Colors.green : Colors.grey[300],
+          foregroundColor:
+          _language == lang ? Colors.white : Colors.black,
         ),
-        onPressed: () {},
-        child: const Text(
-          'Diagnose Crop / निदान करें',
-          style: TextStyle(fontSize: 16),
-        ),
-      ),
-    );
-  }
-
-  // ---------------- DIAGNOSIS RESULTS ----------------
-  Widget _buildDiagnosisResults() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          'Diagnosis Results',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 12),
-        Center(
-          child: Column(
-            children: [
-              Icon(Icons.bug_report, size: 50, color: Colors.grey),
-              SizedBox(height: 8),
-              Text('Upload an image to see diagnosis results'),
-            ],
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ---------------- DIAGNOSIS HISTORY ----------------
-  Widget _buildDiagnosisHistory() {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: const [
-        Text(
-          'Diagnosis History / निदान इतिहास',
-          style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-        ),
-        SizedBox(height: 12),
-        Center(
-          child: Text(
-            'No diagnosis history yet\nअभी तक कोई निदान इतिहास नहीं',
-            textAlign: TextAlign.center,
-          ),
-        ),
-      ],
-    );
-  }
-
-  // ---------------- FOOTER ----------------
-  Widget _buildFooter() {
-    return Container(
-      padding: const EdgeInsets.all(16),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0E7C66),
-        borderRadius: BorderRadius.circular(12),
-      ),
-      child: const Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(
-            'CropGuardian',
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
-          ),
-          SizedBox(height: 8),
-          Text(
-            'Empowering small-scale farmers with AI-powered crop protection.',
-            style: TextStyle(color: Colors.white70),
-          ),
-          SizedBox(height: 16),
-          Text(
-            'Contact Us\n+91 9513065382\nsupport@cropguardian.com',
-            style: TextStyle(color: Colors.white70),
-          ),
-        ],
+        onPressed: () {
+          setState(() => _language = lang);
+        },
+        child: Text(lang),
       ),
     );
   }
