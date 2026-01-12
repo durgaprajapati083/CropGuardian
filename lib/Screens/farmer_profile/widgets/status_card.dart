@@ -1,82 +1,35 @@
 import 'package:flutter/material.dart';
 
-class StatusRow extends StatelessWidget {
-  const StatusRow({super.key});
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: Row(
-        children: const [
-          Expanded(
-            child: StatusCard(
-              icon: Icons.verified,
-              title: "0",
-              subtitle: "Diagnoses",
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: StatusCard(
-              icon: Icons.trending_up,
-              title: "Active",
-              subtitle: "Status",
-            ),
-          ),
-          SizedBox(width: 12),
-          Expanded(
-            child: StatusCard(
-              icon: Icons.person,
-              title: "Member",
-              subtitle: "Verified",
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-}
-
 class StatusCard extends StatelessWidget {
+  final String title, subtitle;
   final IconData icon;
-  final String title;
-  final String subtitle;
+  final Color color;
 
-  const StatusCard({
-    super.key,
-    required this.icon,
-    required this.title,
-    required this.subtitle,
-  });
+  const StatusCard({super.key, required this.title, required this.subtitle, required this.icon, required this.color});
 
   @override
   Widget build(BuildContext context) {
-    return Container(
-      padding: const EdgeInsets.all(14),
-      decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6),
-        ],
-      ),
-      child: Column(
-        children: [
-          Icon(icon, color: Colors.green),
-          const SizedBox(height: 6),
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+    return Expanded(
+      child: Container(
+        padding: const EdgeInsets.all(16),
+        decoration: BoxDecoration(
+          color: Colors.white,
+          borderRadius: BorderRadius.circular(16),
+          boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.05), blurRadius: 10, offset: const Offset(0, 4))],
+        ),
+        child: Row(
+          children: [
+            Icon(icon, color: color, size: 28),
+            const SizedBox(width: 12),
+            Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(title, style: const TextStyle(fontWeight: FontWeight.bold, fontSize: 16)),
+                Text(subtitle, style: const TextStyle(fontSize: 12, color: Colors.grey)),
+              ],
             ),
-          ),
-          Text(
-            subtitle,
-            style: const TextStyle(fontSize: 12, color: Colors.grey),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

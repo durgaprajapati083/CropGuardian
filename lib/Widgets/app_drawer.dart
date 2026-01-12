@@ -170,7 +170,7 @@ class AppDrawer extends StatelessWidget {
         width: double.infinity,
         child: ElevatedButton.icon(
           onPressed: () {
-            Get.to(FarmerProfileScreen());
+            Get.to(FarmerProfileScreen(userId: '',));
           },
           icon: const Icon(Icons.person),
           label: const Text("My Profile / मेरा प्रोफ़ाइल"),

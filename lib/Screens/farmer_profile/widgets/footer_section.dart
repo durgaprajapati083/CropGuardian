@@ -1,34 +1,32 @@
 import 'package:flutter/material.dart';
 
 class FooterSection extends StatelessWidget {
-  const FooterSection({super.key});
+  final String buttonText;
+  final VoidCallback? onPressed;
+
+  const FooterSection({super.key, required this.buttonText, this.onPressed});
 
   @override
   Widget build(BuildContext context) {
     return Container(
-      width: double.infinity,
       padding: const EdgeInsets.all(20),
-      color: Colors.green.shade900,
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text(
-            "CropGuardian",
-            style: TextStyle(
-              color: Colors.white,
-              fontSize: 18,
-              fontWeight: FontWeight.bold,
-            ),
+      child: Container(
+        width: double.infinity,
+        height: 55,
+        decoration: BoxDecoration(
+          gradient: const LinearGradient(colors: [Color(0xFF689F38), Color(0xFF8BC34A)]),
+          borderRadius: BorderRadius.circular(15),
+          boxShadow: [BoxShadow(color: Colors.green.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 5))],
+        ),
+        child: ElevatedButton(
+          style: ElevatedButton.styleFrom(
+            backgroundColor: Colors.transparent,
+            shadowColor: Colors.transparent,
+            shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
           ),
-          SizedBox(height: 10),
-          Text(
-            "Empowering small-scale farmers with AI-powered crop protection and sustainable farming solutions.",
-            style: TextStyle(color: Colors.white70),
-          ),
-          SizedBox(height: 20),
-          Text("© 2026 CropGuardian. All rights reserved.",
-              style: TextStyle(color: Colors.white54)),
-        ],
+          onPressed: onPressed,
+          child: Text(buttonText, style: const TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold)),
+        ),
       ),
     );
   }

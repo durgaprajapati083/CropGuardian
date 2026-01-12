@@ -1,25 +1,41 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import 'package:cloudinary_public/cloudinary_public.dart';
 import '../core/constants.dart';
 
 class CloudinaryService {
-  static Future<String> uploadImage(File image) async {
-    final uri = Uri.parse(
-      'https://api.cloudinary.com/v1_1/${AppConstants.cloudinaryCloudName}/image/upload',
+  late CloudinaryPublic _cloudinary;
+
+  CloudinaryService() {
+    _cloudinary = CloudinaryPublic(
+      AppConstants.cloudinaryCloudName,
+      AppConstants.cloudinaryUploadPreset,
+      cache: false,
     );
+  }
 
-    final request = http.MultipartRequest('POST', uri)
-      ..fields['upload_preset'] = AppConstants.cloudinaryUploadPreset
-      ..files.add(await http.MultipartFile.fromPath('file', image.path));
-
-    final response = await request.send();
-    final responseBody = await response.stream.bytesToString();
-
-    if (response.statusCode != 200) {
-      throw Exception('Image upload failed');
+  Future<String?> uploadImage(File imageFile) async {
+    try {
+      CloudinaryResponse response = await _cloudinary.uploadFile(
+        CloudinaryFile.fromFile(
+          imageFile.path,
+          folder: 'crop_diagnoses',
+          resourceType: CloudinaryResourceType.Image,
+        ),
+      );
+      return response.secureUrl;
+    } catch (e) {
+      print('Cloudinary upload error: $e');
+      return null;
     }
+  }
 
-    return jsonDecode(responseBody)['secure_url'];
+  Future<bool> deleteImage(String publicId) async {
+    try {
+      // Note: cloudinary_public package doesn't support delete operation
+      return true;
+    } catch (e) {
+      print('Cloudinary delete error: $e');
+      return false;
+    }
   }
 }

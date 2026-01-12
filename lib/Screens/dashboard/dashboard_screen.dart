@@ -64,7 +64,7 @@ class DashboardScreen extends StatelessWidget {
             FeatureSection(),
             TrustSection(),
             CTASection(),
-            FooterSection(),
+            FooterSection(buttonText: '',),
           ],
         ),
       ),

@@ -1,65 +1,58 @@
-import 'dart:convert';
 import 'dart:io';
-import 'package:http/http.dart' as http;
+import '../models/diagnosis_model.dart';
+import 'cloudinary_service.dart';
+import 'openrouter_service.dart';
+import 'translator_service.dart';
 
 class DiagnosisService {
-  static const String _apiKey = "AIzaSyAdDbL7X2jdEXBCrlQ3fFfmSpeAJD7tn7s";
+  final CloudinaryService _cloudinaryService = CloudinaryService();
+  final OpenRouterService _openRouterService = OpenRouterService();
+  final TranslatorService _translatorService = TranslatorService();
 
-  static Future<String> diagnoseCrop({
+  Future<Map<String, dynamic>> performDiagnosis({
     required File imageFile,
-    required String description,
+    String? description,
     required String language,
   }) async {
-    final bytes = await imageFile.readAsBytes();
-    final base64Image = base64Encode(bytes);
+    try {
+      print('Uploading image...');
+      final imageUrl = await _cloudinaryService.uploadImage(imageFile);
+      if (imageUrl == null) {
+        throw Exception('Failed to upload image');
+      }
+      print('Image uploaded: $imageUrl');
 
-    final uri = Uri.parse(
-      "https://generativelanguage.googleapis.com/v1beta/models/gemini-2.0-flash:generateContent?key=$_apiKey",
-    );
+      print('Analyzing image...');
+      final analysisText = await _openRouterService.analyzeImage(imageUrl, description);
 
-    final prompt = """
-You are an agricultural expert.
+      print('Parsing response...');
+      final diagnosis = _openRouterService.parseDiagnosisResponse(analysisText);
 
-Analyze the given crop image.
-Farmer description: "$description"
-Respond strictly in $language.
+      if (language != 'English') {
+        print('Translating to $language...');
+        final translatedDiagnosis = await _translatorService.translateDiagnosis(
+          diagnosis.toJson(),
+          language,
+        );
 
-Give:
-1. Disease name
-2. Symptoms
-3. Causes
-4. Treatment
-5. Prevention tips
-""";
+        return {
+          'success': true,
+          'imageUrl': imageUrl,
+          'diagnosis': DiagnosisModel.fromJson(translatedDiagnosis),
+        };
+      }
 
-    final body = {
-      "contents": [
-        {
-          "role": "user",
-          "parts": [
-            {"text": prompt},
-            {
-              "inlineData": {
-                "mimeType": "image/jpeg",
-                "data": base64Image
-              }
-            }
-          ]
-        }
-      ]
-    };
-
-    final response = await http.post(
-      uri,
-      headers: {"Content-Type": "application/json"},
-      body: jsonEncode(body),
-    );
-
-    if (response.statusCode != 200) {
-      throw Exception(response.body);
+      return {
+        'success': true,
+        'imageUrl': imageUrl,
+        'diagnosis': diagnosis,
+      };
+    } catch (e) {
+      print('Error: $e');
+      return {
+        'success': false,
+        'error': e.toString(),
+      };
     }
-
-    final data = jsonDecode(response.body);
-    return data["candidates"][0]["content"]["parts"][0]["text"];
   }
 }

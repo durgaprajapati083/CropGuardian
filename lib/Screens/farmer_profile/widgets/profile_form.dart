@@ -1,127 +1,190 @@
 import 'package:flutter/material.dart';
 
 class ProfileForm extends StatelessWidget {
-  const ProfileForm({super.key});
+  final GlobalKey<FormState> formKey;
+  final TextEditingController nameController;
+  final TextEditingController emailController;
+  final TextEditingController phoneController;
+  final TextEditingController locationController;
+  final TextEditingController farmSizeController;
+  final TextEditingController cropsController;
+  final String? selectedLanguage;
+  final Function(String?) onLanguageChanged;
+
+  const ProfileForm({
+    super.key,
+    required this.formKey,
+    required this.nameController,
+    required this.emailController,
+    required this.phoneController,
+    required this.locationController,
+    required this.farmSizeController,
+    required this.cropsController,
+    this.selectedLanguage,
+    required this.onLanguageChanged,
+  });
 
   @override
   Widget build(BuildContext context) {
+    return Form(
+      key: formKey,
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          _buildSectionTitle("Registration Details (Read Only)"),
+          _buildModernField(
+            label: "Full Name / पूरा नाम",
+            icon: Icons.person_outline,
+            controller: nameController,
+            isReadOnly: true,
+          ),
+          _buildModernField(
+            label: "Email Address / ईमेल",
+            icon: Icons.email_outlined,
+            controller: emailController,
+            isReadOnly: true,
+          ),
+          _buildModernField(
+            label: "Phone Number / फोन नंबर",
+            icon: Icons.phone_android_outlined,
+            controller: phoneController,
+            isReadOnly: true,
+          ),
+
+          const Padding(
+            padding: EdgeInsets.symmetric(vertical: 10),
+            child: Divider(thickness: 1, color: Color(0xFFE0E0E0)),
+          ),
+
+          _buildSectionTitle("Additional Details (Editable)"),
+          _buildModernField(
+            label: "Location / स्थान",
+            icon: Icons.location_on_outlined,
+            controller: locationController,
+            isReadOnly: false,
+            hint: "Enter your village or city",
+          ),
+          _buildLanguageDropdown(),
+          _buildModernField(
+            label: "Farm Size / खेत का आकार",
+            icon: Icons.landscape_outlined,
+            controller: farmSizeController,
+            isReadOnly: false,
+            hint: "e.g. 5 Acres",
+          ),
+          _buildModernField(
+            label: "Crops Grown / उगाई जाने वाली फसलें",
+            icon: Icons.grass_outlined,
+            controller: cropsController,
+            isReadOnly: false,
+            hint: "e.g. Wheat, Rice, Tomato",
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildSectionTitle(String title) {
     return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
+      padding: const EdgeInsets.only(bottom: 12, left: 4),
+      child: Text(
+        title,
+        style: TextStyle(
+          fontSize: 14,
+          fontWeight: FontWeight.bold,
+          color: Colors.green[800],
+          letterSpacing: 0.5,
+        ),
+      ),
+    );
+  }
+
+  Widget _buildModernField({
+    required String label,
+    required IconData icon,
+    required TextEditingController controller,
+    required bool isReadOnly,
+    String? hint,
+  }) {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            label,
+            style: const TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
+            ),
+          ),
+          const SizedBox(height: 6),
+          TextFormField(
+            controller: controller,
+            readOnly: isReadOnly,
+            style: TextStyle(
+              color: isReadOnly ? Colors.grey[600] : Colors.black87,
+              fontWeight: isReadOnly ? FontWeight.w400 : FontWeight.w500,
+            ),
+            decoration: InputDecoration(
+              hintText: hint,
+              prefixIcon: Icon(icon, color: Colors.green[600], size: 22),
+              filled: true,
+              fillColor: isReadOnly ? const Color(0xFFF5F5F5) : Colors.white,
+              contentPadding: const EdgeInsets.symmetric(vertical: 16),
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
+              ),
+              focusedBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: const BorderSide(color: Colors.green, width: 1.5),
+              ),
+              border: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildLanguageDropdown() {
+    return Padding(
+      padding: const EdgeInsets.only(bottom: 16.0),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
           const Text(
-            "Edit Profile / प्रोफ़ाइल संपादित करें",
-            style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold),
-          ),
-          const SizedBox(height: 20),
-
-          _inputField("Full Name / पूरा नाम", "Enter your full name"),
-          _inputField("Location / स्थान", "Village, District, State"),
-          _inputField("Phone Number / फोन नंबर", "+91 XXXXXXXXXX"),
-
-          _dropdownField("Preferred Language / पसंदीदा भाषा"),
-
-          _inputField("Farm Size / खेत का आकार", "e.g. 5 acres / 5 एकड़"),
-          _inputField(
-            "Crops Grown / उगाई जाने वाली फसलें",
-            "e.g. Wheat, Rice, Cotton",
-          ),
-
-          const SizedBox(height: 20),
-          _saveButton(),
-          const SizedBox(height: 12),
-          _logoutButton(),
-        ],
-      ),
-    );
-  }
-
-  Widget _inputField(String label, String hint) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
-          const SizedBox(height: 6),
-          TextField(
-            decoration: InputDecoration(
-              hintText: hint,
-              filled: true,
-              fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
-              ),
+            "Preferred Language / पसंदीदा भाषा",
+            style: TextStyle(
+              fontSize: 13,
+              fontWeight: FontWeight.w600,
+              color: Colors.black54,
             ),
           ),
-        ],
-      ),
-    );
-  }
-
-  Widget _dropdownField(String label) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 14),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          Text(label, style: const TextStyle(fontWeight: FontWeight.w600)),
           const SizedBox(height: 6),
           DropdownButtonFormField<String>(
-            value: "English",
-            items: const [
-              DropdownMenuItem(value: "English", child: Text("English")),
-              DropdownMenuItem(value: "Hindi", child: Text("Hindi")),
-            ],
-            onChanged: (value) {},
+            value: selectedLanguage,
+            icon: const Icon(Icons.keyboard_arrow_down, color: Colors.green),
             decoration: InputDecoration(
+              prefixIcon: const Icon(Icons.language, color: Colors.green, size: 22),
               filled: true,
               fillColor: Colors.white,
-              border: OutlineInputBorder(
-                borderRadius: BorderRadius.circular(10),
-                borderSide: BorderSide.none,
+              enabledBorder: OutlineInputBorder(
+                borderRadius: BorderRadius.circular(12),
+                borderSide: BorderSide(color: Colors.grey[300]!),
               ),
+              border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
+            items: ["English", "Hindi", "Marathi", "Punjabi", "Tamil", "Telugu"]
+                .map((lang) => DropdownMenuItem(value: lang, child: Text(lang)))
+                .toList(),
+            onChanged: onLanguageChanged,
           ),
         ],
-      ),
-    );
-  }
-
-  Widget _saveButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: ElevatedButton.icon(
-        onPressed: () {},
-        icon: const Icon(Icons.save),
-        label: const Text("Save Profile / प्रोफ़ाइल सहेजें"),
-        style: ElevatedButton.styleFrom(
-          backgroundColor: Colors.green,
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-      ),
-    );
-  }
-
-  Widget _logoutButton() {
-    return SizedBox(
-      width: double.infinity,
-      child: OutlinedButton(
-        onPressed: () {},
-        style: OutlinedButton.styleFrom(
-          foregroundColor: Colors.red,
-          side: const BorderSide(color: Colors.red),
-          padding: const EdgeInsets.symmetric(vertical: 14),
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(10),
-          ),
-        ),
-        child: const Text("Logout / लॉग आउट"),
       ),
     );
   }

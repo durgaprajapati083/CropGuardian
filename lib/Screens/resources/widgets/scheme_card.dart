@@ -1,3 +1,5 @@
+import 'dart:ffi';
+
 import 'package:flutter/material.dart';
 
 class SchemeCard extends StatelessWidget {
@@ -5,13 +7,15 @@ class SchemeCard extends StatelessWidget {
   final String hindi;
   final String tag;
   final String description;
+  late Widget button;
 
-  const SchemeCard({
+   SchemeCard({
     super.key,
     required this.title,
     required this.hindi,
     required this.tag,
     required this.description,
+    required this.button,
   });
 
   @override
@@ -66,19 +70,10 @@ class SchemeCard extends StatelessWidget {
           const SizedBox(height: 10),
           Text(description),
           const SizedBox(height: 12),
-          ElevatedButton.icon(
-            onPressed: () {},
-            icon: const Icon(Icons.open_in_new, size: 16),
-            label: const Text("Learn More"),
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.green,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(10),
-              ),
-            ),
-          )
+          Column(children: [button],)
         ],
       ),
     );
   }
 }
+
