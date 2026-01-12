@@ -1,8 +1,5 @@
-
 import 'package:flutter/material.dart';
-import 'package:get/get_core/src/get_main.dart';
-import 'package:get/get_navigation/src/extension_navigation.dart';
-
+import 'package:get/get.dart';
 import '../Authentication/login_screen.dart';
 import '../Screens/community_screen/community_screen.dart';
 import '../Screens/dashboard/dashboard_screen.dart';
@@ -18,195 +15,235 @@ class AppDrawer extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Drawer(
-      elevation: 10,
-      child: SafeArea(
-        child: Column(
-          children: [
-            _header(context),
-            const SizedBox(height: 20),
-
-            _drawerItem(
-              context,
-              title: "Home",
-              subtitle: "होम",
-              // isActive: selectedIndex == 0,
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>DashboardScreen()));
-              },
-            ),
-
-            _drawerItem(
-              context,
-              title: "Diagnose",
-              subtitle: "निदान",
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>DiagnosisScreen()));
-              },
-            ),
-
-            _drawerItem(
-              context,
-              title: "Community",
-              subtitle: "समुदाय",
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>CommunityScreen()));
-              },
-            ),
-
-            _drawerItem(
-              context,
-              title: "Resources",
-              subtitle: "संसाधन",
-              onTap: () {
-                Navigator.push(context, MaterialPageRoute(builder: (context)=>ResourcesScreen()));
-              },
-            ),
-
-            const Spacer(),
-
-            _profileButton(context),
-            const SizedBox(height: 14),
-            _logoutButton(context),
-            const SizedBox(height: 20),
-          ],
-        ),
+      width: MediaQuery.of(context).size.width * 0.85,
+      backgroundColor: Colors.white,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.horizontal(right: Radius.circular(40)),
       ),
-    );
-  }
-
-  /// HEADER
-  Widget _header(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
-      child: Row(
+      child: Stack(
         children: [
-          const CircleAvatar(
-            radius: 22,
-            backgroundColor: Colors.green,
-            child: Icon(Icons.eco, color: Colors.white),
-          ),
-          const SizedBox(width: 10),
-          Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: const [
-              Text(
-                "CropGuardian",
-                style: TextStyle(
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
-                  color: Colors.green,
+          // 1. Background Decorative Gradient Strip
+          Positioned(
+            right: 0,
+            top: 0,
+            bottom: 0,
+            child: Container(
+              width: 5,
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1B5E20), Color(0xFFC6FF00)],
+                  begin: Alignment.topCenter,
+                  end: Alignment.bottomCenter,
                 ),
               ),
-              Text(
-                "कृषि रक्षक",
-                style: TextStyle(color: Colors.grey),
+            ),
+          ),
+
+          Column(
+            children: [
+              _buildModernHeader(context),
+              const SizedBox(height: 20),
+
+              Expanded(
+                child: Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16),
+                  child: ListView(
+                    physics: const BouncingScrollPhysics(),
+                    children: [
+                      _buildGradientTile(
+                        context,
+                        title: "Dashboard",
+                        hindi: "डैशबोर्ड",
+                        icon: Icons.dashboard_customize_rounded,
+                        index: 0,
+                        onTap: () => Get.offAll(() => const DashboardScreen()),
+                      ),
+                      _buildGradientTile(
+                        context,
+                        title: "AI Diagnosis",
+                        hindi: "फसल रोग निदान",
+                        icon: Icons.center_focus_strong_rounded,
+                        index: 1,
+                        onTap: () => Get.to(() => const DiagnosisScreen()),
+                      ),
+                      _buildGradientTile(
+                        context,
+                        title: "Community",
+                        hindi: "किसान समुदाय",
+                        icon: Icons.forum_rounded,
+                        index: 2,
+                        onTap: () => Get.to(() => const CommunityScreen()),
+                      ),
+                      _buildGradientTile(
+                        context,
+                        title: "Resources",
+                        hindi: "संसाधन केंद्र",
+                        icon: Icons.auto_stories_rounded,
+                        index: 3,
+                        onTap: () => Get.to(() => const ResourcesScreen()),
+                      ),
+                    ],
+                  ),
+                ),
               ),
+
+              _buildBottomProfile(context),
             ],
           ),
-          const Spacer(),
-          IconButton(
-            icon: const Icon(Icons.close),
-            onPressed: () => Navigator.pop(context),
-          )
         ],
       ),
     );
   }
 
-  /// DRAWER ITEM
-  Widget _drawerItem(
+  Widget _buildModernHeader(BuildContext context) {
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.only(top: 60, left: 24, bottom: 40, right: 24),
+      decoration: const BoxDecoration(
+        gradient: LinearGradient(
+          colors: [Color(0xFF1B5E20), Color(0xFF2E7D32), Color(0xFF43A047)],
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        borderRadius: BorderRadius.only(bottomRight: Radius.circular(60)),
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Container(
+            padding: const EdgeInsets.all(4),
+            decoration: const BoxDecoration(color: Colors.white24, shape: BoxShape.circle),
+            child: const CircleAvatar(
+              radius: 35,
+              backgroundColor: Colors.white,
+              child: Icon(Icons.eco_rounded, color: Color(0xFF1B5E20), size: 40),
+            ),
+          ),
+          const SizedBox(height: 20),
+          const Text(
+            "CropGuardian",
+            style: TextStyle(
+              color: Colors.white,
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              letterSpacing: 1,
+            ),
+          ),
+          const Text(
+            "Smart Agriculture • कृषि रक्षक",
+            style: TextStyle(color: Colors.white70, fontSize: 13, fontWeight: FontWeight.w500),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildGradientTile(
       BuildContext context, {
         required String title,
-        required String subtitle,
-        bool isActive = false,
+        required String hindi,
+        required IconData icon,
+        required int index,
         required VoidCallback onTap,
       }) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 6),
-      child: InkWell(
+    bool isActive = selectedIndex == index;
+
+    return AnimatedContainer(
+      duration: const Duration(milliseconds: 300),
+      margin: const EdgeInsets.only(bottom: 12),
+      decoration: BoxDecoration(
+        borderRadius: BorderRadius.circular(20),
+        gradient: isActive
+            ? const LinearGradient(
+          colors: [Color(0xFF1B5E20), Color(0xFF4CAF50)],
+          begin: Alignment.centerLeft,
+          end: Alignment.centerRight,
+        )
+            : null,
+        boxShadow: isActive
+            ? [BoxShadow(color: Colors.green.withOpacity(0.3), blurRadius: 10, offset: const Offset(0, 4))]
+            : [],
+      ),
+      child: ListTile(
         onTap: onTap,
-        borderRadius: BorderRadius.circular(14),
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(vertical: 16, horizontal: 14),
-          decoration: BoxDecoration(
-            gradient: isActive
-                ? const LinearGradient(
-              colors: [Color(0xFF00C853), Color(0xFF00BFA5)],
-            )
-                : null,
-            borderRadius: BorderRadius.circular(14),
+        contentPadding: const EdgeInsets.symmetric(horizontal: 20, vertical: 5),
+        leading: Icon(
+          icon,
+          color: isActive ? Colors.white : Colors.grey[700],
+          size: 28,
+        ),
+        title: Text(
+          title,
+          style: TextStyle(
+            color: isActive ? Colors.white : Colors.black87,
+            fontWeight: FontWeight.bold,
+            fontSize: 16,
           ),
-          child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              Text(
-                title,
-                style: TextStyle(
-                  fontSize: 16,
-                  fontWeight: FontWeight.bold,
-                  color: isActive ? Colors.white : Colors.black,
-                ),
-              ),
-              const SizedBox(height: 4),
-              Text(
-                subtitle,
-                style: TextStyle(
-                  color: isActive ? Colors.white70 : Colors.grey,
-                ),
-              ),
-            ],
+        ),
+        subtitle: Text(
+          hindi,
+          style: TextStyle(
+            color: isActive ? Colors.white70 : Colors.grey[600],
+            fontSize: 12,
           ),
+        ),
+        trailing: Icon(
+          Icons.chevron_right_rounded,
+          color: isActive ? Colors.white : Colors.grey[400],
         ),
       ),
     );
   }
 
-  /// PROFILE BUTTON
-  Widget _profileButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SizedBox(
-        width: double.infinity,
-        child: ElevatedButton.icon(
-          onPressed: () {
-            Get.to(FarmerProfileScreen(userId: '',));
-          },
-          icon: const Icon(Icons.person),
-          label: const Text("My Profile / मेरा प्रोफ़ाइल"),
-          style: ElevatedButton.styleFrom(
-            backgroundColor: Colors.green,
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
-            ),
-          ),
-        ),
+  Widget _buildBottomProfile(BuildContext context) {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.grey[50],
+        borderRadius: const BorderRadius.vertical(top: Radius.circular(30)),
       ),
-    );
-  }
-
-  /// LOGOUT BUTTON
-  Widget _logoutButton(BuildContext context) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(horizontal: 16),
-      child: SizedBox(
-        width: double.infinity,
-        child: OutlinedButton.icon(
-          onPressed: () {
-            Get.to(()=>LoginScreen());
-          },
-          icon: const Icon(Icons.logout),
-          label: const Text("Logout / लॉग आउट"),
-          style: OutlinedButton.styleFrom(
-            foregroundColor: Colors.red,
-            side: const BorderSide(color: Colors.red),
-            padding: const EdgeInsets.symmetric(vertical: 14),
-            shape: RoundedRectangleBorder(
-              borderRadius: BorderRadius.circular(14),
+      child: Column(
+        children: [
+          InkWell(
+            onTap: () => Get.to(() => FarmerProfileScreen(userId: 'unique_id')),
+            child: Container(
+              padding: const EdgeInsets.all(15),
+              decoration: BoxDecoration(
+                color: Colors.white,
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.green.withOpacity(0.1)),
+                boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.03), blurRadius: 10)],
+              ),
+              child: Row(
+                children: [
+                  const CircleAvatar(
+                    backgroundColor: Color(0xFFC6FF00),
+                    child: Icon(Icons.person_rounded, color: Colors.black),
+                  ),
+                  const SizedBox(width: 15),
+                  const Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Text("My Profile", style: TextStyle(fontWeight: FontWeight.w900)),
+                      Text("मेरा प्रोफाइल", style: TextStyle(fontSize: 11, color: Colors.grey)),
+                    ],
+                  ),
+                  const Spacer(),
+                  Icon(Icons.settings_suggest_rounded, color: Colors.grey[400]),
+                ],
+              ),
             ),
           ),
-        ),
+          const SizedBox(height: 15),
+          TextButton.icon(
+            onPressed: () => Get.offAll(() => LoginScreen()),
+            icon: const Icon(Icons.power_settings_new_rounded, color: Colors.red),
+            label: const Text(
+              "Logout • लॉग आउट",
+              style: TextStyle(color: Colors.red, fontWeight: FontWeight.bold, fontSize: 14),
+            ),
+          ),
+        ],
       ),
     );
   }

@@ -6,79 +6,160 @@ class FeatureSection extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Padding(
-      padding: const EdgeInsets.all(16),
+      padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 24),
       child: Column(
         crossAxisAlignment: CrossAxisAlignment.start,
-        children: const [
-          Text(
-            "Powerful Features for Farmers",
-            style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
+        children: [
+          // Elegant Header with Dual Language
+          const Text(
+            "Powerful Features",
+            style: TextStyle(
+              fontSize: 26,
+              fontWeight: FontWeight.w900,
+              color: Color(0xFF1B5E20),
+              letterSpacing: -0.5,
+            ),
           ),
-          Text(
+          const Text(
             "किसानों के लिए शक्तिशाली सुविधाएं",
-            style: TextStyle(fontSize: 14, ),
+            style: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF4CAF50),
+              fontWeight: FontWeight.w600,
+            ),
           ),
-          SizedBox(height: 16),
-          FeatureCard(
+          const SizedBox(height: 25),
+
+          _buildMultiColorCard(
             title: "AI Crop Diagnosis",
-            description:
-            "Upload crop photos for instant disease and pest identification with 85% accuracy \n85% सटीकता के साथ तुरंत बीमारी और कीट पहचान के लिए फसल की तस्वीरें अपलोड करें",
+            hindiTitle: "एआई फसल निदान",
+            description: "Instant disease and pest identification with 85% accuracy.",
+            icon: Icons.auto_awesome_rounded,
+            // Gradient: Deep Green to Lime
+            gradientColors: [const Color(0xFF1B5E20), const Color(0xFF4CAF50)],
           ),
-          FeatureCard(
+
+          _buildMultiColorCard(
             title: "Community Support",
-            description:
-            "Connect with fellow farmers, share experiences, and learn from others\nसाथी किसानों से जुड़ें, अनुभव साझा करें और एक-दूसरे से सीखें",
+            hindiTitle: "सामुदायिक सहायता",
+            description: "Connect with fellow farmers and share valuable experiences.",
+            icon: Icons.groups_3_rounded,
+            // Gradient: Deep Orange to Amber
+            gradientColors: [const Color(0xFFE65100), const Color(0xFFFFB300)],
           ),
-          FeatureCard(
+
+          _buildMultiColorCard(
             title: "Resource Library",
-            description:
-            "Access government schemes, market prices, and educational content in your language\nअपनी भाषा में सरकारी योजनाएं, बाजार मूल्य और शैक्षिक सामग्री प्राप्त करें",
+            hindiTitle: "संसाधन पुस्तकालय",
+            description: "Access government schemes and market prices in your language.",
+            icon: Icons.menu_book_rounded,
+            // Gradient: Royal Blue to Sky Blue
+            gradientColors: [const Color(0xFF0D47A1), const Color(0xFF42A5F5)],
           ),
-          FeatureCard(
+
+          _buildMultiColorCard(
             title: "Organic Solutions",
-            description:
-            "Get personalized organic treatment plans and sustainable farming practices\nव्यक्तिगत जैविक उपचार योजनाएं और टिकाऊ खेती प्रथाएं प्राप्त करें",
+            hindiTitle: "जैविक समाधान",
+            description: "Personalized organic treatment plans for sustainable farming.",
+            icon: Icons.eco_rounded,
+            // Gradient: Teal to Mint
+            gradientColors: [const Color(0xFF004D40), const Color(0xFF26A69A)],
           ),
         ],
       ),
     );
   }
-}
 
-class FeatureCard extends StatelessWidget {
-  final String title;
-  final String description;
-
-  const FeatureCard({
-    super.key,
-    required this.title,
-    required this.description,
-  });
-
-  @override
-  Widget build(BuildContext context) {
+  Widget _buildMultiColorCard({
+    required String title,
+    required String hindiTitle,
+    required String description,
+    required IconData icon,
+    required List<Color> gradientColors,
+  }) {
     return Container(
-      margin: const EdgeInsets.only(bottom: 16),
-      padding: const EdgeInsets.all(14),
+      margin: const EdgeInsets.only(bottom: 20),
+      height: 140, // Fixed height for a uniform grid feel
       decoration: BoxDecoration(
-        color: Colors.white,
-        borderRadius: BorderRadius.circular(14),
-        boxShadow: const [
-          BoxShadow(color: Colors.black12, blurRadius: 6),
+        borderRadius: BorderRadius.circular(30),
+        gradient: LinearGradient(
+          colors: gradientColors,
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+        ),
+        boxShadow: [
+          BoxShadow(
+            color: gradientColors[0].withOpacity(0.4),
+            blurRadius: 15,
+            offset: const Offset(0, 8),
+          ),
         ],
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
+      child: Stack(
         children: [
-          Text(
-            title,
-            style: const TextStyle(
-              fontWeight: FontWeight.bold,
-              fontSize: 16,
+          // Background Decorative Circle for visual flair
+          Positioned(
+            right: -20,
+            top: -20,
+            child: CircleAvatar(
+              radius: 60,
+              backgroundColor: Colors.white.withOpacity(0.1),
             ),
           ),
-          const SizedBox(height: 6),
-          Text(description, style: const TextStyle(color: Colors.grey)),
+          Padding(
+            padding: const EdgeInsets.all(20.0),
+            child: Row(
+              children: [
+                // Icon Section with Glass effect
+                Container(
+                  width: 60,
+                  height: 60,
+                  decoration: BoxDecoration(
+                    color: Colors.white.withOpacity(0.2),
+                    borderRadius: BorderRadius.circular(18),
+                  ),
+                  child: Icon(icon, color: Colors.white, size: 35),
+                ),
+                const SizedBox(width: 20),
+                // Content Section
+                Expanded(
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      Text(
+                        title,
+                        style: const TextStyle(
+                          color: Colors.white,
+                          fontWeight: FontWeight.bold,
+                          fontSize: 18,
+                        ),
+                      ),
+                      Text(
+                        hindiTitle,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.9),
+                          fontSize: 13,
+                          fontWeight: FontWeight.w500,
+                        ),
+                      ),
+                      const SizedBox(height: 8),
+                      Text(
+                        description,
+                        maxLines: 2,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: Colors.white.withOpacity(0.8),
+                          fontSize: 12,
+                        ),
+                      ),
+                    ],
+                  ),
+                ),
+                const Icon(Icons.arrow_forward_ios, color: Colors.white54, size: 16),
+              ],
+            ),
+          ),
         ],
       ),
     );

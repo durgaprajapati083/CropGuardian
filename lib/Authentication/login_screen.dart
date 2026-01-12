@@ -19,163 +19,199 @@ class _LoginScreenState extends State<LoginScreen> {
   TextEditingController loginPasswordController = TextEditingController();
 
   bool obscureText = true;
+  bool _isVisible = false;
+
+  @override
+  void initState() {
+    super.initState();
+    // Safe entrance animation trigger
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      if (mounted) setState(() => _isVisible = true);
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(
-        backgroundColor: Colors.black38,
-        title: Center(child: Text("Login Screen")),
-      ),
-      body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Padding(
-          padding: EdgeInsets.only(top: 110),
-          child: Column(
-            children: [
-              Container(
-                  height: 150,
-                  alignment: Alignment.center,
-                  child: Image.asset('assets/images/flogo.png')
-              ),
-              SizedBox(height: 50),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
-                  controller: loginEmailController,
-                  decoration: InputDecoration(
-                      hintText: "Email",
-                      labelText: "Email",
-                      prefixIcon: Icon(Icons.email),
-                      border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
-                  obscureText: obscureText,
-                  controller: loginPasswordController,
-                  obscuringCharacter: "*",
-                  decoration: InputDecoration(
-                    hintText: "Password",
-                    labelText: "Password",
-                    suffixIcon: GestureDetector(
-                        onTap: (){
-                          setState(() {
-                            obscureText = !obscureText;
-                          });
-                        },
-                        child: obscureText ? Icon(Icons.visibility_off): Icon(Icons.visibility)),
-                    prefixIcon: Icon(Icons.password_outlined),
-                    border: OutlineInputBorder(
-                        borderRadius: BorderRadius.circular(10)),
+      body: Container(
+        width: double.infinity,
+        height: double.infinity,
+        decoration: const BoxDecoration(
+          gradient: LinearGradient(
+            colors: [Color(0xFF1B5E20), Color(0xFF388E3C)],
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+          ),
+        ),
+        child: AnimatedOpacity(
+          duration: const Duration(milliseconds: 800),
+          opacity: _isVisible ? 1.0 : 0.0,
+          child: SingleChildScrollView(
+            physics: const BouncingScrollPhysics(),
+            child: Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 25),
+              child: Column(
+                children: [
+                  const SizedBox(height: 80),
+
+                  // Brand Logo
+                  Container(
+                    height: 110,
+                    decoration: const BoxDecoration(
+                      color: Colors.white,
+                      shape: BoxShape.circle,
+                      boxShadow: [BoxShadow(color: Colors.black26, blurRadius: 15)],
+                    ),
+                    child: Image.asset('assets/images/flogo.png'),
                   ),
-                ),
-              ),
-              SizedBox(height: 5),
-              Container(
-                alignment: Alignment.bottomRight,
-                padding: EdgeInsets.only(right: 20),
-                child: Card(
-                  color: Colors.white70,
-                  child: Padding(
-                    padding: const EdgeInsets.all(5.0),
-                    child: Container(
-                      child: GestureDetector(
-                          onTap: () {
-                            Get.to(() => ForgotPassword());
-                          },
-                          child: Text("Forgot Password")),
+
+                  const SizedBox(height: 25),
+                  const Text(
+                    "Welcome Back",
+                    style: TextStyle(fontSize: 32, fontWeight: FontWeight.w900, color: Colors.white),
+                  ),
+                  const Text(
+                    "Smart Farming Starts Here • लॉगिन करें",
+                    style: TextStyle(fontSize: 14, color: Colors.white70, letterSpacing: 1),
+                  ),
+
+                  const SizedBox(height: 40),
+
+                  // Login Form Card (Matches Signup exactly)
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.95),
+                      borderRadius: BorderRadius.circular(25),
+                    ),
+                    child: Column(
+                      children: [
+                        // Email Field with Outlined Border
+                        TextFormField(
+                          controller: loginEmailController,
+                          decoration: InputDecoration(
+                            hintText: "Email",
+                            prefixIcon: const Icon(Icons.email, color: Color(0xFF1B5E20)),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                        ),
+
+                        const SizedBox(height: 15),
+
+                        // Password Field with Outlined Border
+                        TextFormField(
+                          controller: loginPasswordController,
+                          obscureText: obscureText,
+                          obscuringCharacter: "*",
+                          decoration: InputDecoration(
+                            hintText: "Password",
+                            prefixIcon: const Icon(Icons.lock, color: Color(0xFF1B5E20)),
+                            suffixIcon: IconButton(
+                              icon: Icon(obscureText ? Icons.visibility_off : Icons.visibility),
+                              onPressed: () => setState(() => obscureText = !obscureText),
+                            ),
+                            border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+                          ),
+                        ),
+
+                        // Forgot Password Link
+                        Align(
+                          alignment: Alignment.centerRight,
+                          child: TextButton(
+                            onPressed: () => Get.to(() => const ForgotPassword()),
+                            child: const Text(
+                              "Forgot Password?",
+                              style: TextStyle(color: Color(0xFF1B5E20), fontWeight: FontWeight.bold),
+                            ),
+                          ),
+                        ),
+                      ],
                     ),
                   ),
-                ),
-              ),
-              SizedBox(
-                height: 10,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.black12),
-                onPressed: () async {
-                  var loginEmail = loginEmailController.text.trim();
-                  var loginPassword = loginPasswordController.text.trim();
-                  try {
-                    final User? firebaseUser = (await FirebaseAuth.instance
-                        .signInWithEmailAndPassword(
-                        email: loginEmail, password: loginPassword))
-                        .user;
-                    if (firebaseUser != null) {
-                      Get.off(() => DashboardScreen());
-                      Fluttertoast.showToast(msg: "User LoggedIn",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 5,
-                        backgroundColor: Colors.green,
-                        textColor: Colors.white,
-                        fontSize: 15.0,
-                      );
-                    } else {
-                      Text("Please register your account");
-                      Fluttertoast.showToast(msg: "Please register your account",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 5,
-                        backgroundColor: Colors.redAccent,
-                        textColor: Colors.white,
-                        fontSize: 15.0,
-                      );
-                    }
-                  } on FirebaseAuthException catch (e) {
-                    SnackBar(content: Text("Error $e"));
-                    Fluttertoast.showToast(msg: "Error :$e",
-                      toastLength: Toast.LENGTH_SHORT,
-                      gravity: ToastGravity.BOTTOM,
-                      timeInSecForIosWeb: 5,
-                      backgroundColor: Colors.redAccent,
-                      textColor: Colors.white,
-                      fontSize: 15.0,
-                    );
-                  }
-                },
-                child: Text("Login"),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              Card(
-                color: Colors.white70,
-                child: GestureDetector(
-                  onTap: () {
-                    Navigator.push(context, MaterialPageRoute(builder: (context)=>SignupScreen()));
-                  },
-                  child: Container(
-                    padding: EdgeInsets.all(10),
-                    child: RichText(
-                      text: TextSpan(
-                        children: [
-                          TextSpan(
-                            text: "Don't have an account? ",
-                            style: TextStyle(color: Colors.black, fontSize: 16),
-                          ),
-                          TextSpan(
-                            text: "Signup",
-                            style: TextStyle(color: Colors.blue, fontSize: 16),
-                          ),
-                        ],
+
+                  const SizedBox(height: 35),
+
+                  // Action Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFFC6FF00),
+                        foregroundColor: Colors.black,
+                        shape: RoundedRectangleBorder(borderRadius: BorderRadius.circular(15)),
+                        elevation: 8,
+                      ),
+                      onPressed: _performLogin,
+                      child: const Text("LOGIN", style: TextStyle(fontWeight: FontWeight.bold, fontSize: 18)),
+                    ),
+                  ),
+
+                  const SizedBox(height: 25),
+
+                  // Signup Redirect Card
+                  GestureDetector(
+                    onTap: () {
+                      Navigator.push(context, MaterialPageRoute(builder: (context) => const SignupScreen()));
+                    },
+                    child: Container(
+                      padding: const EdgeInsets.all(12),
+                      decoration: BoxDecoration(
+                        color: Colors.white.withOpacity(0.1),
+                        borderRadius: BorderRadius.circular(15),
+                        border: Border.all(color: Colors.white24),
+                      ),
+                      child: RichText(
+                        text: const TextSpan(
+                          children: [
+                            TextSpan(text: "Don't have an account? ", style: TextStyle(color: Colors.white, fontSize: 16)),
+                            TextSpan(text: "Signup", style: TextStyle(color: Color(0xFFC6FF00), fontWeight: FontWeight.bold, fontSize: 16)),
+                          ],
+                        ),
                       ),
                     ),
                   ),
-                ),
+                  const SizedBox(height: 50),
+                ],
               ),
-            ],
+            ),
           ),
         ),
       ),
     );
+  }
+
+  // --- Logic remain exactly same as your source code ---
+  void _performLogin() async {
+    var loginEmail = loginEmailController.text.trim();
+    var loginPassword = loginPasswordController.text.trim();
+
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator(color: Colors.white)),
+    );
+
+    try {
+      final User? firebaseUser = (await FirebaseAuth.instance
+          .signInWithEmailAndPassword(email: loginEmail, password: loginPassword))
+          .user;
+
+      Navigator.pop(context); // Close loading dialog
+
+      if (firebaseUser != null) {
+        Get.offAll(() => const DashboardScreen());
+        Fluttertoast.showToast(
+          msg: "User LoggedIn",
+          backgroundColor: Colors.green,
+          textColor: Colors.white,
+        );
+      } else {
+        Fluttertoast.showToast(msg: "Please register your account", backgroundColor: Colors.redAccent);
+      }
+    } on FirebaseAuthException catch (e) {
+      Navigator.pop(context);
+      Fluttertoast.showToast(msg: "Error: $e", backgroundColor: Colors.redAccent);
+    }
   }
 }

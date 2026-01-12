@@ -2,7 +2,6 @@ import 'package:flutter/material.dart';
 
 import '../../Widgets/app_drawer.dart';
 import '../farmer_profile/widgets/footer_section.dart';
-import 'widgets/cta_section.dart';
 import 'widgets/feature_card.dart';
 import 'widgets/hero_section.dart';
 import 'widgets/stats_row.dart';
@@ -63,8 +62,7 @@ class DashboardScreen extends StatelessWidget {
             StatsRow(),
             FeatureSection(),
             TrustSection(),
-            CTASection(),
-            FooterSection(buttonText: '',),
+            // FooterSection(buttonText: '',),
           ],
         ),
       ),

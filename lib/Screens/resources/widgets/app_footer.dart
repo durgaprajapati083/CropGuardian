@@ -1,149 +1,158 @@
 import 'package:flutter/material.dart';
+import 'package:font_awesome_flutter/font_awesome_flutter.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AppFooter extends StatelessWidget {
   const AppFooter({super.key});
+
+  // Function to open social links safely
+  Future<void> _launchURL(String urlString) async {
+    final Uri url = Uri.parse(urlString);
+    if (!await launchUrl(url, mode: LaunchMode.externalApplication)) {
+      debugPrint("Could not launch $urlString");
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      padding: const EdgeInsets.all(20),
-      decoration: BoxDecoration(
-        color: const Color(0xFF0B6E4F), // Dark green
-        boxShadow: [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.1),
-            blurRadius: 8,
-          ),
-        ],
+      decoration: const BoxDecoration(
+        color: Color(0xFF1B5E20), // Your Deep Nature Green
+        borderRadius: BorderRadius.only(
+          topLeft: Radius.circular(35),
+          topRight: Radius.circular(35),
+        ),
       ),
-      child: Column(
-        crossAxisAlignment: CrossAxisAlignment.start,
-        children: [
-          // Logo + App name
-          Row(
-            children: const [
-              Icon(Icons.eco, color: Colors.lightGreenAccent, size: 28),
-              SizedBox(width: 8),
-              Text(
-                "CropGuardian",
-                style: TextStyle(
-                  color: Colors.white,
-                  fontSize: 18,
-                  fontWeight: FontWeight.bold,
+      child: Padding(
+        padding: const EdgeInsets.symmetric(horizontal: 25, vertical: 35),
+        child: Column(
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            // Branding Section
+            Row(
+              children: [
+                const Icon(Icons.eco, color: Color(0xFFC6FF00), size: 28),
+                const SizedBox(width: 10),
+                const Text(
+                  "CropGuardian",
+                  style: TextStyle(
+                      color: Colors.white,
+                      fontSize: 22,
+                      fontWeight: FontWeight.bold
+                  ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 6),
-          const Text(
-            "कृषि रक्षक",
-            style: TextStyle(color: Colors.white70),
-          ),
-
-          const SizedBox(height: 14),
-          const Text(
-            "Empowering small-scale farmers with AI-powered crop protection and sustainable farming solutions.",
-            style: TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-
-          const SizedBox(height: 8),
-          const Text(
-            "छोटे किसानों को AI-संचालित फसल सुरक्षा के साथ सशक्त बनाना।",
-            style: TextStyle(color: Colors.white54, fontSize: 12),
-          ),
-
-          const SizedBox(height: 20),
-
-          // Quick Links
-          _sectionTitle("Quick Links"),
-          _footerLink("Home / होम"),
-          _footerLink("Diagnose / निदान"),
-          _footerLink("Community / समुदाय"),
-          _footerLink("Resources / संसाधन"),
-
-          const SizedBox(height: 16),
-
-          // Support
-          _sectionTitle("Support"),
-          _footerLink("Help Center / सहायता केंद्र"),
-          _footerLink("FAQs / सामान्य प्रश्न"),
-          _footerLink("Tutorial Videos / ट्यूटोरियल वीडियो"),
-          _footerLink("Contact Support / सहायता संपर्क"),
-
-          const SizedBox(height: 16),
-
-          // Contact
-          _sectionTitle("Contact Us"),
-          _footerRow(Icons.phone, "+91 9513065382"),
-          _footerRow(Icons.email, "support@cropguardian.com"),
-          _footerRow(Icons.location_on, "India"),
-
-          const SizedBox(height: 18),
-          const Divider(color: Colors.white24),
-
-          const SizedBox(height: 8),
-          const Center(
-            child: Text(
-              "© 2026 CropGuardian. Built with care for farmers.",
-              style: TextStyle(color: Colors.white54, fontSize: 11),
+              ],
             ),
-          ),
+            const SizedBox(height: 10),
 
-          const SizedBox(height: 6),
-          const Center(
-            child: Text(
-              "Privacy Policy   |   Terms of Service",
+            // YOUR REQUESTED TEXT ADDED HERE
+            const Text(
+              "Empowering the hands that feed us with smart technology.",
+              style: TextStyle(color: Colors.white60, fontSize: 13),
+            ),
+
+            const SizedBox(height: 30),
+            const Divider(color: Colors.white10),
+            const SizedBox(height: 25),
+
+            // Social Media Header
+            const Text(
+              "CONNECT WITH THE DEVELOPER",
               style: TextStyle(
-                color: Colors.white54,
-                fontSize: 11,
-                decoration: TextDecoration.underline,
+                  color: Color(0xFFC6FF00),
+                  fontSize: 11,
+                  fontWeight: FontWeight.bold,
+                  letterSpacing: 1.5
               ),
             ),
-          ),
-        ],
-      ),
-    );
-  }
+            const SizedBox(height: 20),
 
-  // ---------- Helpers ----------
+            // OFFICIAL SOCIAL ICONS ROW
+            Row(
+              children: [
+                _socialIcon(
+                  icon: FontAwesomeIcons.instagram,
+                  url: "https://www.instagram.com/durgaprajapati067?igsh=MTgwMTducnk5Z3JiNA==",
+                ),
+                _socialIcon(
+                  icon: FontAwesomeIcons.facebook,
+                  url: "https://www.facebook.com/share/17e6uaX4oU/",
+                ),
+                _socialIcon(
+                  icon: FontAwesomeIcons.linkedin,
+                  url: "https://www.linkedin.com/in/durga-prajapati-0692b1247?utm_source=share&utm_campaign=share_via&utm_content=profile&utm_medium=android_app",
+                ),
+                _socialIcon(
+                  icon: FontAwesomeIcons.github,
+                  url: "https://github.com/durgaprajapati083",
+                ),
+              ],
+            ),
 
-  static Widget _sectionTitle(String text) {
-    return Padding(
-      padding: const EdgeInsets.only(bottom: 6),
-      child: Text(
-        text,
-        style: const TextStyle(
-          color: Colors.white,
-          fontWeight: FontWeight.bold,
+            const SizedBox(height: 35),
+
+            // Contact Mini Card
+            Container(
+              padding: const EdgeInsets.all(18),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.05),
+                borderRadius: BorderRadius.circular(20),
+                border: Border.all(color: Colors.white10),
+              ),
+              child: Column(
+                children: [
+                  _contactRow(Icons.email_outlined, "support@cropguardian.com"),
+                  const SizedBox(height: 15),
+                  _contactRow(Icons.phone_android_outlined, "+91 9513065382"),
+                ],
+              ),
+            ),
+
+            const SizedBox(height: 40),
+            const Center(
+              child: Text(
+                "© 2026 CropGuardian • Built with care for Farmers",
+                style: TextStyle(color: Colors.white24, fontSize: 11),
+              ),
+            ),
+          ],
         ),
       ),
     );
   }
 
-  static Widget _footerLink(String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 2),
-      child: Text(
-        text,
-        style: const TextStyle(color: Colors.white70, fontSize: 13),
+  // --- UI HELPER FOR SOCIAL ICONS ---
+  Widget _socialIcon({required IconData icon, required String url}) {
+    return GestureDetector(
+      onTap: () => _launchURL(url),
+      child: Container(
+        margin: const EdgeInsets.only(right: 15),
+        height: 48,
+        width: 48,
+        decoration: BoxDecoration(
+          color: Colors.white.withOpacity(0.08),
+          shape: BoxShape.circle,
+          border: Border.all(color: Colors.white12),
+        ),
+        child: Center(
+          child: FaIcon(
+            icon,
+            color: Colors.white,
+            size: 20,
+          ),
+        ),
       ),
     );
   }
 
-  static Widget _footerRow(IconData icon, String text) {
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 3),
-      child: Row(
-        children: [
-          Icon(icon, color: Colors.white70, size: 16),
-          const SizedBox(width: 6),
-          Text(
-            text,
-            style: const TextStyle(color: Colors.white70, fontSize: 13),
-          ),
-        ],
-      ),
+  Widget _contactRow(IconData icon, String text) {
+    return Row(
+      children: [
+        Icon(icon, color: const Color(0xFFC6FF00), size: 18),
+        const SizedBox(width: 12),
+        Text(text, style: const TextStyle(color: Colors.white70, fontSize: 13)),
+      ],
     );
   }
 }

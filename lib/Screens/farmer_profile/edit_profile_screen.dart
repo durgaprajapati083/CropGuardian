@@ -106,7 +106,6 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
         buttonText: "Save Details",
         onPressed: () {
           _save();
-          Navigator.push(context, MaterialPageRoute(builder: (context)=>FarmerProfileScreen(userId: ''),),);
         },
       ),
     );
