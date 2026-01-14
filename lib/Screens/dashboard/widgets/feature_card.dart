@@ -1,3 +1,7 @@
+import 'package:croupguardiandurgaprajapati/Screens/community_screen/community_screen.dart';
+import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/diagnosis_screen.dart';
+import 'package:croupguardiandurgaprajapati/Screens/organic_screen/organic_solution_page.dart';
+import 'package:croupguardiandurgaprajapati/Screens/resources/resource_screen.dart';
 import 'package:flutter/material.dart';
 
 class FeatureSection extends StatelessWidget {
@@ -30,40 +34,66 @@ class FeatureSection extends StatelessWidget {
           ),
           const SizedBox(height: 25),
 
-          _buildMultiColorCard(
-            title: "AI Crop Diagnosis",
-            hindiTitle: "एआई फसल निदान",
-            description: "Instant disease and pest identification with 85% accuracy.",
-            icon: Icons.auto_awesome_rounded,
-            // Gradient: Deep Green to Lime
-            gradientColors: [const Color(0xFF1B5E20), const Color(0xFF4CAF50)],
+          InkWell(
+            borderRadius: BorderRadius.circular(30),
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>DiagnosisScreen()));
+            },
+            child: _buildMultiColorCard(
+              title: "AI Crop Diagnosis",
+              hindiTitle: "एआई फसल निदान",
+              description: "Instant disease and pest identification with 85% accuracy.",
+              icon: Icons.auto_awesome_rounded,
+              // Gradient: Deep Green to Lime
+              gradientColors: [const Color(0xFF1B5E20), const Color(0xFF4CAF50)],
+            ),
           ),
 
-          _buildMultiColorCard(
-            title: "Community Support",
-            hindiTitle: "सामुदायिक सहायता",
-            description: "Connect with fellow farmers and share valuable experiences.",
-            icon: Icons.groups_3_rounded,
-            // Gradient: Deep Orange to Amber
-            gradientColors: [const Color(0xFFE65100), const Color(0xFFFFB300)],
+          InkWell(
+            borderRadius: BorderRadius.circular(30),
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>CommunityScreen()));
+            },
+            child: _buildMultiColorCard(
+              title: "Community Support",
+              hindiTitle: "सामुदायिक सहायता",
+              description: "Connect with fellow farmers and share valuable experiences.",
+              icon: Icons.groups_3_rounded,
+              // Gradient: Deep Orange to Amber
+              gradientColors: [const Color(0xFFE65100), const Color(0xFFFFB300)],
+            ),
           ),
 
-          _buildMultiColorCard(
-            title: "Resource Library",
-            hindiTitle: "संसाधन पुस्तकालय",
-            description: "Access government schemes and market prices in your language.",
-            icon: Icons.menu_book_rounded,
-            // Gradient: Royal Blue to Sky Blue
-            gradientColors: [const Color(0xFF0D47A1), const Color(0xFF42A5F5)],
+          InkWell(
+            borderRadius: BorderRadius.circular(30),
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>ResourcesScreen()));
+            },
+            child: _buildMultiColorCard(
+              title: "Resource Library",
+              hindiTitle: "संसाधन पुस्तकालय",
+              description: "Access government schemes and market prices in your language.",
+              icon: Icons.menu_book_rounded,
+              // Gradient: Royal Blue to Sky Blue
+              gradientColors: [const Color(0xFF0D47A1), const Color(0xFF42A5F5)],
+            ),
           ),
 
-          _buildMultiColorCard(
-            title: "Organic Solutions",
-            hindiTitle: "जैविक समाधान",
-            description: "Personalized organic treatment plans for sustainable farming.",
-            icon: Icons.eco_rounded,
-            // Gradient: Teal to Mint
-            gradientColors: [const Color(0xFF004D40), const Color(0xFF26A69A)],
+          InkWell(
+
+            borderRadius: BorderRadius.circular(30),
+            onTap: (){
+              Navigator.push(context, MaterialPageRoute(builder: (context)=>OrganicSolutionPage()));
+            }
+            ,
+            child: _buildMultiColorCard(
+              title: "Organic Solutions",
+              hindiTitle: "जैविक समाधान",
+              description: "Personalized organic treatment plans for sustainable farming.",
+              icon: Icons.eco_rounded,
+              // Gradient: Teal to Mint
+              gradientColors: [const Color(0xFF004D40), const Color(0xFF26A69A)],
+            ),
           ),
         ],
       ),

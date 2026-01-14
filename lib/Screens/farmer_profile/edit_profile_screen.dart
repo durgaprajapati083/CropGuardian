@@ -2,10 +2,7 @@ import 'dart:io';
 
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:get/get.dart';
 import 'package:image_picker/image_picker.dart';
-
-import 'farmer_profile_screen.dart';
 import 'model/farmer_profile_model.dart';
 import 'services/cloudinary_service.dart';
 import 'services/firebase_profile_service.dart';
@@ -112,22 +109,53 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   }
 
   _save() async {
-    String? url = profile!.profileImageUrl;
-    if (imageFile != null)
-      url = await _cloudinaryService.uploadImage(imageFile!);
+    if (!_formKey.currentState!.validate()) return;
 
-    var updated = FarmerProfileModel(
-      userId: profile!.userId,
-      userName: name.text,
-      userPhone: phone.text,
-      userEmail: email.text,
-      location: location.text,
-      language: lang,
-      farmSize: farmSize.text,
-      cropsGrown: crops.text,
-      profileImageUrl: url,
+    // Show a loading dialog so the user knows the upload is happening
+    showDialog(
+      context: context,
+      barrierDismissible: false,
+      builder: (context) => const Center(child: CircularProgressIndicator()),
     );
-    await _firebaseService.updateUserProfile(updated);
-    Navigator.pop(context);
+
+    try {
+      // 1. Get the existing URL or null
+      String? url = profile?.profileImageUrl;
+
+      // 2. If a new image was picked, upload it and get the NEW Cloudinary URL
+      if (imageFile != null) {
+        url = await _cloudinaryService.uploadImage(imageFile!);
+      }
+
+      // 3. Create the updated model with the NEW URL
+      var updated = FarmerProfileModel(
+        userId: profile!.userId,
+        userName: name.text,
+        userPhone: phone.text,
+        userEmail: email.text,
+        location: location.text,
+        language: lang,
+        farmSize: farmSize.text,
+        cropsGrown: crops.text,
+        profileImageUrl: url, // This will now correctly save the Cloudinary URL
+      );
+
+      // 4. Update Firestore
+      await _firebaseService.updateUserProfile(updated);
+
+      // 5. Hide the loading dialog
+      if (mounted) Navigator.pop(context);
+
+      // 6. Go back to the profile screen
+      if (mounted) {
+        Navigator.pop(context);
+        ScaffoldMessenger.of(context).showSnackBar(
+          const SnackBar(content: Text("Profile Updated Successfully!")),
+        );
+      }
+    } catch (e) {
+      if (mounted) Navigator.pop(context); // Hide loading on error
+      debugPrint("Update Error: $e");
+    }
   }
 }

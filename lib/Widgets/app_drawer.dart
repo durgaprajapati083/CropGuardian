@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart'; // Added Firebase Auth
 import '../Authentication/login_screen.dart';
 import '../Screens/community_screen/community_screen.dart';
 import '../Screens/dashboard/dashboard_screen.dart';
@@ -72,7 +73,7 @@ class AppDrawer extends StatelessWidget {
                         hindi: "किसान समुदाय",
                         icon: Icons.forum_rounded,
                         index: 2,
-                        onTap: () => Get.to(() => const CommunityScreen()),
+                        onTap: () => Get.to(() => CommunityScreen()),
                       ),
                       _buildGradientTile(
                         context,
@@ -235,8 +236,36 @@ class AppDrawer extends StatelessWidget {
             ),
           ),
           const SizedBox(height: 15),
+
+          // --- UPDATED LOGOUT SECTION ---
           TextButton.icon(
-            onPressed: () => Get.offAll(() => LoginScreen()),
+            onPressed: () async {
+              try {
+                // 1. Logs out the user from Firebase server
+                await FirebaseAuth.instance.signOut();
+
+                // 2. Navigates to Login and deletes all previous screens from memory
+                Get.offAll(() => const LoginScreen());
+
+                // 3. Success feedback
+                Get.snackbar(
+                  "Success",
+                  "Successfully Logged Out",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.green,
+                  colorText: Colors.white,
+                  icon: const Icon(Icons.check_circle, color: Colors.white),
+                );
+              } catch (e) {
+                Get.snackbar(
+                  "Error",
+                  "Logout failed: $e",
+                  snackPosition: SnackPosition.BOTTOM,
+                  backgroundColor: Colors.red,
+                  colorText: Colors.white,
+                );
+              }
+            },
             icon: const Icon(Icons.power_settings_new_rounded, color: Colors.red),
             label: const Text(
               "Logout • लॉग आउट",

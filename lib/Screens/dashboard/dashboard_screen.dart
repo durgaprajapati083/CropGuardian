@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 
 import '../../Widgets/app_drawer.dart';
-import '../farmer_profile/widgets/footer_section.dart';
 import 'widgets/feature_card.dart';
 import 'widgets/hero_section.dart';
 import 'widgets/stats_row.dart';
@@ -19,10 +18,10 @@ class DashboardScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.white,
         title: Padding(
-          padding: const EdgeInsets.only(left: 65),
+          padding: const EdgeInsets.only(left: 50),
           child: Row(
             children: [
-              Image.asset('assets/images/flogo.png',height: 20,width: 20,),
+              Image.asset('assets/images/flogo.png',height: 35,width: 35,),
               SizedBox(width: 10,),
               Column(
                   crossAxisAlignment: CrossAxisAlignment.start,
@@ -30,18 +29,11 @@ class DashboardScreen extends StatelessWidget {
                   children: [
                     Text(
                       "CropGuardian",
-                      style: TextStyle(
-                        color: Colors.green,
-                        fontWeight: FontWeight.bold,
-                        fontSize: 18,
-                      ),
+                      style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.green),
                     ),
                     Padding(
                       padding: EdgeInsets.only(left: 30),
-                      child: Text("कृषि रक्षक",style: TextStyle(
-                        color: Colors.green,
-                        fontSize: 12,
-                      ),),
+                      child: Text("कृषि रक्षक",style: TextStyle(color: Colors.green, fontSize: 18)),
                     ),
                   ]
               ),

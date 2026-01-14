@@ -113,18 +113,16 @@ class _LoginScreenState extends State<LoginScreen> {
                             border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
                           ),
                         ),
+                        SizedBox(height: 10,),
 
                         // Forgot Password Link
                         Align(
                           alignment: Alignment.centerRight,
-                          child: TextButton(
-                            onPressed: () => Get.to(() => const ForgotPassword()),
-                            child: const Text(
-                              "Forgot Password?",
-                              style: TextStyle(color: Color(0xFF1B5E20), fontWeight: FontWeight.bold),
+                            child: GestureDetector(
+                              onTap: () => Navigator.push(context, MaterialPageRoute(builder: (c) => const ForgotPasswordScreen())),
+                              child: Text("Forgot Password?", style: TextStyle(color: Color(0xFF1B5E20),fontWeight: FontWeight.w500)),
                             ),
                           ),
-                        ),
                       ],
                     ),
                   ),

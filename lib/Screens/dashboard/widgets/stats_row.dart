@@ -23,19 +23,19 @@ class StatsRow extends StatelessWidget {
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _StatItem(
-            value: "3.9k+",
+            value: "1",
             label: "Diagnoses",
             icon: Icons.troubleshoot,
             color: const Color(0xFF2E7D32),
           ),
           const _StatItem(
-            value: "4k+",
+            value: "1",
             label: "Farmers",
             icon: Icons.people_alt_rounded,
             color: Color(0xFFF57C00),
           ),
           const _StatItem(
-            value: "98%",
+            value: "85%",
             label: "Accuracy",
             icon: Icons.verified_rounded,
             color: Color(0xFF1976D2),

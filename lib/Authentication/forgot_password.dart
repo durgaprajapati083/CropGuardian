@@ -1,86 +1,144 @@
-import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
-import 'package:fluttertoast/fluttertoast.dart';
-import 'package:get/get.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+// import 'widgests/app_footer.dart'; // Using your folder naming
 
-import 'login_screen.dart';
-
-class ForgotPassword extends StatefulWidget {
-  const ForgotPassword({super.key});
+class ForgotPasswordScreen extends StatefulWidget {
+  const ForgotPasswordScreen({super.key});
 
   @override
-  State<ForgotPassword> createState() => _ForgotPasswordState();
+  State<ForgotPasswordScreen> createState() => _ForgotPasswordScreenState();
 }
 
-class _ForgotPasswordState extends State<ForgotPassword> {
-  TextEditingController forgotPasswordController = TextEditingController();
+class _ForgotPasswordScreenState extends State<ForgotPasswordScreen> {
+  final _emailController = TextEditingController();
+  bool _isLoading = false;
+
+  @override
+  void dispose() {
+    _emailController.dispose();
+    super.dispose();
+  }
+
+  // FIXED FUNCTION
+  Future<void> _resetPassword() async {
+    if (_emailController.text.trim().isEmpty) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        const SnackBar(content: Text("Please enter your email")),
+      );
+      return;
+    }
+
+    setState(() => _isLoading = true);
+
+    try {
+      // Ensure you 'await' the result so it actually sends
+      await FirebaseAuth.instance.sendPasswordResetEmail(
+        email: _emailController.text.trim(),
+      );
+
+      if (!mounted) return;
+
+      showDialog(
+        context: context,
+        builder: (context) => AlertDialog(
+          title: const Text("Email Sent"),
+          content: const Text("Check your inbox (and Spam folder) for the reset link."),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: const Text("OK"),
+            )
+          ],
+        ),
+      );
+    } on FirebaseAuthException catch (e) {
+      ScaffoldMessenger.of(context).showSnackBar(
+        SnackBar(content: Text(e.message ?? "An error occurred")),
+      );
+    } finally {
+      if (mounted) setState(() => _isLoading = false);
+    }
+  }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF1F8E9),
       appBar: AppBar(
-        backgroundColor: Colors.black38,
-        title: Center(child: Text("Forgot Password")),
+        backgroundColor: Colors.transparent,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back, color: Color(0xFF1B5E20)),
+          onPressed: () => Navigator.pop(context),
+        ),
       ),
       body: SingleChildScrollView(
-        physics: BouncingScrollPhysics(),
-        child: Padding(
-          padding: EdgeInsets.only(top: 100),
-          child: Column(
-            children: [
-              Container(
-                  height: 150,
-                  alignment: Alignment.center,
-                  child: Image.asset('assets/images/flogo.png')
-              ),
-              SizedBox(height: 50,),
-              Container(
-                padding: EdgeInsets.symmetric(horizontal: 30),
-                child: TextFormField(
-                  controller: forgotPasswordController,
-                  decoration: InputDecoration(
-                      hintText: "Email",
-                      labelText: "Email",
-                      prefixIcon: Icon(Icons.email),
+        child: Column(
+          children: [
+            Padding(
+              padding: const EdgeInsets.symmetric(horizontal: 30),
+              child: Column(
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  const SizedBox(height: 20),
+                  const Text(
+                    "Forgot Password?",
+                    style: TextStyle(
+                      fontSize: 32,
+                      fontWeight: FontWeight.bold,
+                      color: Color(0xFF1B5E20),
+                    ),
+                  ),
+                  const SizedBox(height: 10),
+                  const Text(
+                    "Enter your email address and we will send you a link to reset your password.",
+                    style: TextStyle(color: Colors.grey, fontSize: 16),
+                  ),
+                  const SizedBox(height: 40),
+
+                  // Email Field
+                  TextField(
+                    controller: _emailController,
+                    keyboardType: TextInputType.emailAddress,
+                    decoration: InputDecoration(
+                      hintText: "Email Address",
+                      prefixIcon: const Icon(Icons.email_outlined, color: Color(0xFF1B5E20)),
+                      filled: true,
+                      fillColor: Colors.white,
                       border: OutlineInputBorder(
-                          borderRadius: BorderRadius.circular(10))),
-                ),
-              ),
-              SizedBox(
-                height: 20,
-              ),
-              ElevatedButton(
-                style: ElevatedButton.styleFrom(
-                    foregroundColor: Colors.black,
-                    backgroundColor: Colors.black12),
-                onPressed: () async {
-                  var forgotPassword = forgotPasswordController.text.trim();
-                  try {
-                    await FirebaseAuth.instance
-                        .sendPasswordResetEmail(email: forgotPassword)
-                        .then((value) => {
-                      print("Email Sent"),
-                      Fluttertoast.showToast(msg: "Email sent, check your email",
-                        toastLength: Toast.LENGTH_SHORT,
-                        gravity: ToastGravity.BOTTOM,
-                        timeInSecForIosWeb: 1,
-                        backgroundColor: Colors.redAccent,
-                        textColor: Colors.white,
-                        fontSize: 15.0,
+                        borderRadius: BorderRadius.circular(15),
+                        borderSide: BorderSide.none,
                       ),
-                      Get.off(() => LoginScreen),
-                    });
-                  } on FirebaseAuthException catch (e) {
-                    print("Error $e");
-                  }
-                },
-                child: Text("Forgot Password"),
+                    ),
+                  ),
+                  const SizedBox(height: 30),
+
+                  // Reset Button
+                  SizedBox(
+                    width: double.infinity,
+                    height: 55,
+                    child: ElevatedButton(
+                      onPressed: _isLoading ? null : _resetPassword,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: const Color(0xFF1B5E20),
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(15),
+                        ),
+                      ),
+                      child: _isLoading
+                          ? const CircularProgressIndicator(color: Colors.white)
+                          : const Text(
+                        "Send Reset Link",
+                        style: TextStyle(color: Colors.white, fontSize: 18, fontWeight: FontWeight.bold),
+                      ),
+                    ),
+                  ),
+                  const SizedBox(height: 100), // Spacing for footer
+                ],
               ),
-              SizedBox(
-                height: 20,
-              ),
-            ],
-          ),
+            ),
+            // const AppFooter(),
+          ],
         ),
       ),
     );

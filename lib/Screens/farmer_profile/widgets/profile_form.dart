@@ -179,7 +179,7 @@ class ProfileForm extends StatelessWidget {
               ),
               border: OutlineInputBorder(borderRadius: BorderRadius.circular(12)),
             ),
-            items: ["English", "Hindi", "Marathi", "Punjabi", "Tamil", "Telugu"]
+            items: ["English", "Kannada", "Hindi", "Marathi", "Punjabi", "Tamil", "Telugu"]
                 .map((lang) => DropdownMenuItem(value: lang, child: Text(lang)))
                 .toList(),
             onChanged: onLanguageChanged,

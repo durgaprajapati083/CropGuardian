@@ -54,32 +54,32 @@ class HeroSection extends StatelessWidget {
                 // --- CONTINUOUS TYPING ANIMATION ---
                 SizedBox(
                   height: 110,
-                  child: AnimatedTextKit(
-                    repeatForever: true,
-                    animatedTexts: [
-                      TypewriterAnimatedText(
-                        'AI-Powered Farming\nFor Every Farmer',
-                        speed: const Duration(milliseconds: 100),
-                        textStyle: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          color: Colors.white,
-                          height: 1.1,
+                    child: AnimatedTextKit(
+                      repeatForever: true,
+                      animatedTexts: [
+                        TypewriterAnimatedText(
+                          'AI-Powered Farming\nFor Every Farmer',
+                          speed: const Duration(milliseconds: 100),
+                          textStyle: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: Colors.white,
+                            height: 1.1,
+                          ),
                         ),
-                      ),
-                      TypewriterAnimatedText(
-                        'AI-Powered Farming\nFor Every Farmer',
-                        speed: const Duration(milliseconds: 100),
-                        textStyle: const TextStyle(
-                          fontSize: 32,
-                          fontWeight: FontWeight.w900,
-                          color: Color(0xFFC6FF00), // Changes color on loop
-                          height: 1.1,
+                        TypewriterAnimatedText(
+                          'AI-Powered Farming\nFor Every Farmer',
+                          speed: const Duration(milliseconds: 100),
+                          textStyle: const TextStyle(
+                            fontSize: 32,
+                            fontWeight: FontWeight.w900,
+                            color: Color(0xFFC6FF00), // Changes color on loop
+                            height: 1.1,
+                          ),
                         ),
-                      ),
-                    ],
+                      ],
+                    ),
                   ),
-                ),
 
                 const SizedBox(height: 10),
                 const Text(
@@ -153,7 +153,7 @@ class HeroSection extends StatelessWidget {
     return SizedBox(
       width: double.infinity,
       child: OutlinedButton(
-        onPressed: () => Get.to(() => const CommunityScreen()),
+        onPressed: () => Get.to(() => CommunityScreen()),
         style: OutlinedButton.styleFrom(
           foregroundColor: Colors.white,
           side: const BorderSide(color: Colors.white, width: 2),
