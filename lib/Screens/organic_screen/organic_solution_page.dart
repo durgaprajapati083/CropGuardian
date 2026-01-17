@@ -29,6 +29,7 @@ class _OrganicSolutionPageState extends State<OrganicSolutionPage> {
     return Scaffold(
       backgroundColor: const Color(0xFFF1F8E9),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white ),
         centerTitle: true,
         backgroundColor: const Color(0xFF1B5E20),
         title: const Text("Organic Medicine", style: TextStyle(color: Colors.white, fontWeight: FontWeight.bold)),

@@ -102,9 +102,9 @@ class AppFooter extends StatelessWidget {
               ),
               child: Column(
                 children: [
-                  _contactRow(Icons.email_outlined, "support@cropguardian.com"),
+                  _contactRow(Icons.email_outlined, "durgaprajapati703@gmail.com"),
                   const SizedBox(height: 15),
-                  _contactRow(Icons.phone_android_outlined, "+91 9513065382"),
+                  _contactRow(Icons.phone_android_outlined, "+91 7054484937\n+977 9806935942"),
                 ],
               ),
             ),

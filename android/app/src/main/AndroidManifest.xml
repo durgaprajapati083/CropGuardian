@@ -14,7 +14,7 @@
     </queries>
 
     <application
-        android:label="croupguardiandurgaprajapati"
+        android:label="CropGuardian"
         android:name="${applicationName}"
         android:icon="@mipmap/ic_launcher">
         <activity

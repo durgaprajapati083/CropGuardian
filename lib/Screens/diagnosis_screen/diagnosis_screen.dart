@@ -16,6 +16,8 @@ class DiagnosisScreen extends StatelessWidget {
       create: (_) => DiagnosisViewModel(),
       child: Scaffold(
         appBar: AppBar(
+          backgroundColor: Colors.green[900],
+         iconTheme: IconThemeData(color: Colors.white),
           centerTitle: true,
           title: Padding(
             padding: const EdgeInsets.only(top: 25.0),
@@ -30,7 +32,7 @@ class DiagnosisScreen extends StatelessWidget {
               ],
             ),
           ),
-          backgroundColor: Color(0xFF388E3C),
+          // backgroundColor: Color(0xFF388E3C),
           elevation: 0,
         ),
         body: SingleChildScrollView(
@@ -71,13 +73,13 @@ class DiagnosisScreen extends StatelessWidget {
                                       onChanged: (value) => viewModel.setDescription(value),
                                     ),
                                   ),
-                                  IconButton(
-                                    icon: Icon(
-                                      viewModel.isListening ? Icons.mic : Icons.mic_none,
-                                      color: viewModel.isListening ? Colors.red : Colors.grey,
-                                    ),
-                                    onPressed: () => viewModel.toggleVoiceInput(),
-                                  ),
+                                  // IconButton(
+                                  //   icon: Icon(
+                                  //     viewModel.isListening ? Icons.mic : Icons.mic_none,
+                                  //     color: viewModel.isListening ? Colors.red : Colors.grey,
+                                  //   ),
+                                  //   onPressed: () => viewModel.toggleVoiceInput(),
+                                  // ),
                                 ],
                               ),
                             ),
@@ -100,7 +102,7 @@ class DiagnosisScreen extends StatelessWidget {
                             child: ElevatedButton(
                               onPressed: viewModel.isLoading ? null : () => viewModel.performDiagnosis(),
                               style: ElevatedButton.styleFrom(
-                                backgroundColor: Colors.green,
+                                backgroundColor: Colors.green[900],
                                 padding: const EdgeInsets.symmetric(vertical: 16),
                                 shape: RoundedRectangleBorder(
                                   borderRadius: BorderRadius.circular(12),
@@ -241,6 +243,10 @@ class DiagnosisScreen extends StatelessWidget {
                   _buildSeverityRow(diagnosis.severity),
                   const Divider(),
 
+                  // confidenceScore
+                  _buildConfidenceRow(diagnosis.confidenceScore),
+                  const Divider(),
+
                   // Description
                   const SizedBox(height: 12),
                   const Text(
@@ -373,11 +379,12 @@ class DiagnosisScreen extends StatelessWidget {
                         child: Row(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            const Icon(Icons.check_circle_outline,
+                            const Icon(Icons.check_circle,
                                 size: 16, color: Colors.green),
                             const SizedBox(width: 8),
                             Expanded(child: Text(measure)),
                           ],
+
                         ),
                       ),
                     ),
@@ -470,4 +477,47 @@ class DiagnosisScreen extends StatelessWidget {
       ],
     );
   }
+}
+
+Widget _buildConfidenceRow(double confidence) {
+  // Convert 0.95 to 95%
+  int percentage = (confidence * 100).toInt();
+
+  // Color logic: Green for high confidence, Orange for medium
+  Color scoreColor = percentage >= 80 ? Colors.blue.shade700 : Colors.orange.shade700;
+
+  return Row(
+    children: [
+      Icon(Icons.verified_user_rounded, color: scoreColor, size: 24),
+      const SizedBox(width: 12),
+      Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text(
+            'AI Confidence',
+            style: TextStyle(
+              fontSize: 12,
+              color: Colors.grey.shade600,
+            ),
+          ),
+          Container(
+            padding: const EdgeInsets.symmetric(horizontal: 12, vertical: 4),
+            decoration: BoxDecoration(
+              color: scoreColor.withOpacity(0.1),
+              borderRadius: BorderRadius.circular(12),
+              border: Border.all(color: scoreColor.withOpacity(0.3)),
+            ),
+            child: Text(
+              "$percentage%",
+              style: TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.bold,
+                color: scoreColor,
+              ),
+            ),
+          ),
+        ],
+      ),
+    ],
+  );
 }

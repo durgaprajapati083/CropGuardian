@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
+import 'package:get/get.dart';
+import '../controller/stats_controller.dart';
 
 class StatsRow extends StatelessWidget {
   const StatsRow({super.key});
 
   @override
   Widget build(BuildContext context) {
+    // Initialize the controller to start listening to Firestore
+    final StatsController stats = Get.put(StatsController());
+
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: 16, vertical: 10),
       padding: const EdgeInsets.symmetric(vertical: 25, horizontal: 10),
@@ -19,29 +24,30 @@ class StatsRow extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
+      // Obx listens to the .obs variables in the controller and rebuilds automatically
+      child: Obx(() => Row(
         mainAxisAlignment: MainAxisAlignment.spaceAround,
         children: [
           _StatItem(
-            value: "1",
+            value: stats.diagnosesCount.value.toString(),
             label: "Diagnoses",
             icon: Icons.troubleshoot,
             color: const Color(0xFF2E7D32),
           ),
-          const _StatItem(
-            value: "1",
+          _StatItem(
+            value: stats.farmersCount.value.toString(),
             label: "Farmers",
             icon: Icons.people_alt_rounded,
-            color: Color(0xFFF57C00),
+            color: const Color(0xFFF57C00),
           ),
-          const _StatItem(
-            value: "85%",
+          _StatItem(
+            value: "${stats.accuracyValue.value.toInt()}%",
             label: "Accuracy",
             icon: Icons.verified_rounded,
-            color: Color(0xFF1976D2),
+            color: const Color(0xFF1976D2),
           ),
         ],
-      ),
+      )),
     );
   }
 }
@@ -61,9 +67,12 @@ class _StatItem extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    // Clean the value for animation (removes % if present)
+    int endValue = int.tryParse(value.replaceAll('%', '')) ?? 0;
+
     return Column(
       children: [
-        // Circular Icon Badge
+        // Circular Icon Badge with soft colored background
         Container(
           padding: const EdgeInsets.all(12),
           decoration: BoxDecoration(
@@ -73,17 +82,25 @@ class _StatItem extends StatelessWidget {
           child: Icon(icon, color: color, size: 24),
         ),
         const SizedBox(height: 12),
-        // Large Value Text
-        Text(
-          value,
-          style: TextStyle(
-            fontSize: 22,
-            fontWeight: FontWeight.w900,
-            color: Colors.black87,
-            letterSpacing: -0.5,
-          ),
+
+        // Animated Counter for a "Exciting" premium feel
+        TweenAnimationBuilder(
+          tween: IntTween(begin: 0, end: endValue),
+          duration: const Duration(seconds: 2),
+          builder: (context, int val, child) {
+            return Text(
+              value.contains('%') ? "$val%" : "$val",
+              style: const TextStyle(
+                fontSize: 22,
+                fontWeight: FontWeight.w900,
+                color: Colors.black87,
+                letterSpacing: -0.5,
+              ),
+            );
+          },
         ),
-        // Label with uppercase for professionalism
+
+        // Label with uppercase for a professional dashboard look
         Text(
           label.toUpperCase(),
           style: TextStyle(

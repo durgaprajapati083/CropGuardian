@@ -10,77 +10,49 @@ class OpenRouterService {
   Future<String> analyzeImage(String imageUrl, String? userDescription) async {
     try {
       await _enforceRateLimit();
-
       final prompt = _buildPrompt(userDescription);
-
-      print('Sending request to OpenRouter...');
-      print('Using model: ${AppConstants.visionModel}');
 
       final response = await http.post(
         Uri.parse(AppConstants.openRouterApiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${AppConstants.openRouterApiKey}',
-          'HTTP-Referer': 'https://cropguardian.app',
+          'HTTP-Referer': 'https://cropguardian.app', // Required for free models
           'X-Title': 'CropGuardian',
         },
         body: jsonEncode({
-          'model': AppConstants.visionModel,
+          'model': 'google/gemini-2.0-flash-exp:free', // USE THIS FOR THE DEMO
           'messages': [
             {
               'role': 'user',
               'content': [
-                {
-                  'type': 'text',
-                  'text': prompt,
-                },
-                {
-                  'type': 'image_url',
-                  'image_url': {
-                    'url': imageUrl,
-                  },
-                },
+                {'type': 'text', 'text': prompt},
+                {'type': 'image_url', 'image_url': {'url': imageUrl}},
               ],
             },
           ],
-          'max_tokens': 2000,
-          'temperature': 0.7,
+          'transforms': ['identity'], // Tells OpenRouter not to modify the response
         }),
-      );
-
-      _lastRequestTime = DateTime.now();
-
-      print('Response status: ${response.statusCode}');
+      ).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
 
+        // IMPROVED EXTRACTION LOGIC
         if (data['choices'] != null && data['choices'].isNotEmpty) {
-          final text = data['choices'][0]['message']['content'];
-          print('Response received successfully');
-          return text;
-        } else {
-          throw Exception('No response from OpenRouter');
+          final message = data['choices'][0]['message'];
+          if (message != null && message['content'] != null) {
+            return message['content'].toString();
+          }
         }
+        // If we reach here, the API gave a 200 but no text
+        throw Exception('AI returned an empty message. Try a different model.');
       } else {
-        final errorBody = response.body;
-        print('Error response: $errorBody');
-        if (response.statusCode == 503) {
-          throw Exception(
-              'AI service is temporarily unavailable. Please try again later.'
-          );
-        }
-
-        throw Exception('API error: ${response.statusCode}');
+        throw Exception('API Error: ${response.statusCode}');
       }
     } catch (e) {
-      print('OpenRouter error: $e');
-
-      if (e.toString().contains('quota') || e.toString().contains('rate')) {
-        throw Exception('API limit reached. Please wait and try again.');
-      }
-
-      throw Exception('Failed to analyze: $e');
+      print('OpenRouter Error: $e');
+      rethrow;
     }
   }
 
@@ -103,6 +75,7 @@ Analyze this crop/plant image and provide diagnosis in JSON format:
   "cropType": "crop name",
   "detectedIssue": "disease/pest or Healthy",
   "severity": "Low/Medium/High/Critical",
+  "confidence_score":0.95,
   "symptoms": ["symptom1", "symptom2"],
   "description": "detailed description",
   "solutions": ["solution1", "solution2"],
@@ -132,7 +105,12 @@ Analyze this crop/plant image and provide diagnosis in JSON format:
       final jsonMatch = RegExp(r'\{[\s\S]*\}').firstMatch(cleanText);
       if (jsonMatch != null) {
         final jsonString = jsonMatch.group(0)!;
-        final json = jsonDecode(jsonString);
+        final Map<String,dynamic> json = jsonDecode(jsonString);
+        if(!json.containsKey('confidence_score')){
+          json['confidence_score']=0.85;
+        }
+        json['timestamp']=DateTime.now().toIso8601String();
+        // final json = jsonDecode(jsonString);
         return DiagnosisModel.fromJson(json);
       }
       throw Exception('No valid JSON found');

@@ -25,7 +25,7 @@ class CommunityScreen extends StatelessWidget {
           style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
         ),
         centerTitle: true,
-        backgroundColor: Colors.green[800],
+        backgroundColor: Colors.green[900],
         foregroundColor: Colors.white,
         elevation: 2,
       ),
@@ -45,9 +45,9 @@ class CommunityScreen extends StatelessWidget {
       }),
       floatingActionButton: FloatingActionButton.extended(
         // UI TIP: "Extended" FAB looks more modern than just a circle
-        label: const Text("Post"),
-        icon: const Icon(Icons.add_a_photo),
-        backgroundColor: Colors.green[800],
+        label: const Text("Post",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w900),),
+        icon: const Icon(Icons.add_a_photo,color: Colors.white,),
+        backgroundColor: Colors.green[900],
         onPressed: () => _showPostSheet(context),
       ),
     );

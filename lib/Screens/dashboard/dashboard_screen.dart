@@ -18,7 +18,7 @@ class DashboardScreen extends StatelessWidget {
         elevation: 0,
         backgroundColor: Colors.white,
         title: Padding(
-          padding: const EdgeInsets.only(left: 50),
+          padding: const EdgeInsets.only(left: 45),
           child: Row(
             children: [
               Image.asset('assets/images/flogo.png',height: 35,width: 35,),
@@ -54,7 +54,6 @@ class DashboardScreen extends StatelessWidget {
             StatsRow(),
             FeatureSection(),
             TrustSection(),
-            // FooterSection(buttonText: '',),
           ],
         ),
       ),

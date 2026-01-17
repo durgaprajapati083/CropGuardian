@@ -33,6 +33,7 @@ class DiagnosisViewModel extends ChangeNotifier {
 
   DiagnosisViewModel() {
     _initializeServices();
+
   }
 
   Future<void> _initializeServices() async {
@@ -119,6 +120,8 @@ Severity: ${_diagnosis!.severity}.
 Description: ${_diagnosis!.description}.
 Solutions: ${_diagnosis!.solutions.join('. ')}.
 Preventive Measures: ${_diagnosis!.preventiveMeasures.join('. ')}.
+Pesticide: ${_diagnosis!.recommendedPesticides.join('. ')}.
+confidence_score: ${_diagnosis!.confidenceScore}
 ''';
   }
 

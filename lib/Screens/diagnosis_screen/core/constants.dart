@@ -4,10 +4,12 @@ class AppConstants {
   static const String cloudinaryUploadPreset = 'crop_images';
 
   // OpenRouter API Configuration (FREE - supports vision models)
-  static const String openRouterApiKey = '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';
+  static const String openRouterApiKey = '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';
   static const String openRouterApiUrl = 'https://openrouter.ai/api/v1/chat/completions';
   static const String visionModel = 'qwen/qwen-2-vl-7b-instruct:free';
 
+  // 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
+  // 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
 
 //   // Option 1 (Best for crops):
 //   static const String visionModel = 'meta-llama/llama-3.2-90b-vision-instruct:free';

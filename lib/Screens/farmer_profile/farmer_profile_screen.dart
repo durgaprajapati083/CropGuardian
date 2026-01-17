@@ -20,6 +20,7 @@ class FarmerProfileScreen extends StatelessWidget {
     return Scaffold(
       backgroundColor: const Color(0xFFF8FAF8),
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         title: const Text(
           "CropGuardian",
           style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),

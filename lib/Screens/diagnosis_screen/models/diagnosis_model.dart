@@ -7,6 +7,7 @@ class DiagnosisModel {
   final List<String> solutions;
   final List<String> preventiveMeasures;
   final List<String> recommendedPesticides;
+  final double confidenceScore;
 
   final String timestamp;
 
@@ -19,8 +20,8 @@ class DiagnosisModel {
     required this.solutions,
     required this.preventiveMeasures,
     required this.recommendedPesticides,
-
     required this.timestamp,
+    required this.confidenceScore,
   });
 
   factory DiagnosisModel.fromJson(Map<String, dynamic> json) {
@@ -35,6 +36,7 @@ class DiagnosisModel {
       recommendedPesticides:
       List<String>.from(json['recommendedPesticides'] ?? []),
       timestamp: json['timestamp'] ?? DateTime.now().toIso8601String(),
+      confidenceScore: (json['confidence_score'] ?? 0.85).toDouble(),
     );
   }
 
@@ -49,6 +51,7 @@ class DiagnosisModel {
       'preventiveMeasures': preventiveMeasures,
       'recommendedPesticides': recommendedPesticides,
       'timestamp': timestamp,
+      'confidence_score':confidenceScore,
     };
   }
 }

@@ -1,15 +1,20 @@
 import 'package:croupguardiandurgaprajapati/Authentication/login_screen.dart';
-import 'package:croupguardiandurgaprajapati/Screens/dashboard/dashboard_screen.dart';
 import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/viewmodels/diagnosis_viewmodel.dart';
 import 'package:croupguardiandurgaprajapati/firebase_options.dart';
+import 'package:croupguardiandurgaprajapati/splash_screen.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:get/get.dart';
 import 'package:provider/provider.dart';
 
 void main() async{
   WidgetsFlutterBinding.ensureInitialized();
+  SystemChrome.setPreferredOrientations([
+    DeviceOrientation.portraitUp,
+    DeviceOrientation.portraitDown
+  ]);
   try{
     await Firebase.initializeApp(
         options: DefaultFirebaseOptions.currentPlatform,
@@ -48,7 +53,7 @@ class _MyAppState extends State<MyApp> {
       theme: ThemeData(
         colorScheme: .fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: user !=null ? DashboardScreen() : LoginScreen(),
+      home: user !=null ? VibrantFarmerSplash() : LoginScreen(),
     );
   }
 }

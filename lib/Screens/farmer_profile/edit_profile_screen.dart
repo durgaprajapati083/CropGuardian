@@ -62,6 +62,7 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
     return Scaffold(
       appBar: AppBar(
+        iconTheme: IconThemeData(color: Colors.white),
         centerTitle: true,
         title: const Text(
           "Edit Profile",
