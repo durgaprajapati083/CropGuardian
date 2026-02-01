@@ -1,4 +1,4 @@
-# croupguardiandurgaprajapati
+# croupguardian
 
 Diagnos the damage crop.
 
