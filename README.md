@@ -4,6 +4,8 @@ Diagnos the damage crop.
 
 ## Getting Started
 
+![image alt](https://github.com/durgaprajapati083/CroupGuardian/blob/2e2de7ae529f62be2396b822d900559b3299b8f5/Screenshot%202026-02-01%20122421.png)
+
 This project is a starting point for a Flutter application.
 
 A few resources to get you started if this is your first Flutter project:
