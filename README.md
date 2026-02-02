@@ -1,6 +1,5 @@
-# croupguardian
+                                                                                                   # CropGuardian
 
-Diagnos the damage crop.
 
 ## Getting Started
 
