@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:cloud_firestore/cloud_firestore.dart';
+import 'package:croupguardiandurgaprajapati/responsive_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:get/get.dart';
@@ -16,39 +17,41 @@ class CommunityScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      // UI TIP: Using a slightly off-white/grey background makes the white cards "pop"
-      backgroundColor: const Color(0xFFF2F4F7),
-      appBar: AppBar(
-        title: const Text(
-          "Kisan Community",
-          style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+    return ResponsivePage(
+      child: Scaffold(
+        // UI TIP: Using a slightly off-white/grey background makes the white cards "pop"
+        backgroundColor: const Color(0xFFF2F4F7),
+        appBar: AppBar(
+          title: const Text(
+            "Kisan Community",
+            style: TextStyle(fontWeight: FontWeight.bold, letterSpacing: 1.2),
+          ),
+          centerTitle: true,
+          backgroundColor: Colors.green[900],
+          foregroundColor: Colors.white,
+          elevation: 2,
         ),
-        centerTitle: true,
-        backgroundColor: Colors.green[900],
-        foregroundColor: Colors.white,
-        elevation: 2,
-      ),
-      body: Obx(() {
-        if (controller.posts.isEmpty) {
-          return const Center(
-            child: CircularProgressIndicator(color: Colors.green),
+        body: Obx(() {
+          if (controller.posts.isEmpty) {
+            return const Center(
+              child: CircularProgressIndicator(color: Colors.green),
+            );
+          }
+          return ListView.builder(
+            physics: const BouncingScrollPhysics(),
+            // UI TIP: Makes scrolling feel smooth like iOS
+            itemCount: controller.posts.length,
+            itemBuilder: (context, index) =>
+                _postCard(context, controller.posts[index]),
           );
-        }
-        return ListView.builder(
-          physics: const BouncingScrollPhysics(),
-          // UI TIP: Makes scrolling feel smooth like iOS
-          itemCount: controller.posts.length,
-          itemBuilder: (context, index) =>
-              _postCard(context, controller.posts[index]),
-        );
-      }),
-      floatingActionButton: FloatingActionButton.extended(
-        // UI TIP: "Extended" FAB looks more modern than just a circle
-        label: const Text("Post",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w900),),
-        icon: const Icon(Icons.add_a_photo,color: Colors.white,),
-        backgroundColor: Colors.green[900],
-        onPressed: () => _showPostSheet(context),
+        }),
+        floatingActionButton: FloatingActionButton.extended(
+          // UI TIP: "Extended" FAB looks more modern than just a circle
+          label: const Text("Post",style: TextStyle(color: Colors.white,fontWeight: FontWeight.w900),),
+          icon: const Icon(Icons.add_a_photo,color: Colors.white,),
+          backgroundColor: Colors.green[900],
+          onPressed: () => _showPostSheet(context),
+        ),
       ),
     );
   }

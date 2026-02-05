@@ -1,3 +1,4 @@
+import 'package:croupguardiandurgaprajapati/responsive_page.dart';
 import 'package:flutter/material.dart';
 import 'package:flutter_inappwebview/flutter_inappwebview.dart';
 
@@ -20,32 +21,34 @@ class _WebViewScreenState extends State<WebViewScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      appBar: AppBar(
-        title: Text(widget.title),
-        backgroundColor: Colors.green[700],
-        leading: IconButton(
-          icon: Icon(Icons.arrow_back),
-          onPressed: () => Navigator.pop(context),
-        ),
-        actions: [
-          IconButton(
-            icon: Icon(Icons.refresh),
-            onPressed: () => webViewController?.reload(),
+    return ResponsivePage(
+      child: Scaffold(
+        appBar: AppBar(
+          title: Text(widget.title),
+          backgroundColor: Colors.green[700],
+          leading: IconButton(
+            icon: Icon(Icons.arrow_back),
+            onPressed: () => Navigator.pop(context),
           ),
-        ],
-      ),
-      body: InAppWebView(
-        initialUrlRequest: URLRequest(url: WebUri(widget.url)),
-        onWebViewCreated: (controller) {
-          webViewController = controller;
-        },
-        onLoadStart: (controller, url) {
-          print("Loading: $url");
-        },
-        onLoadStop: (controller, url) {
-          print("Loaded: $url");
-        },
+          actions: [
+            IconButton(
+              icon: Icon(Icons.refresh),
+              onPressed: () => webViewController?.reload(),
+            ),
+          ],
+        ),
+        body: InAppWebView(
+          initialUrlRequest: URLRequest(url: WebUri(widget.url)),
+          onWebViewCreated: (controller) {
+            webViewController = controller;
+          },
+          onLoadStart: (controller, url) {
+            print("Loading: $url");
+          },
+          onLoadStop: (controller, url) {
+            print("Loaded: $url");
+          },
+        ),
       ),
     );
   }

@@ -1,3 +1,4 @@
+import 'package:croupguardiandurgaprajapati/responsive_page.dart';
 import 'package:flutter/material.dart';
 import 'pages/government_schemes_page.dart';
 import 'pages/learning_resources_page.dart';
@@ -27,81 +28,83 @@ class _ResourcesScreenState extends State<ResourcesScreen> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
-      backgroundColor: const Color(0xFFF4F9F5),
-      body: Column(
-        children: [
-          // Header Section with Search
-          Container(
-            padding: const EdgeInsets.only(top: 60, bottom: 25, left: 20, right: 20),
-            decoration: const BoxDecoration(
-              gradient: LinearGradient(
-                colors: [Color(0xFF1B5E20), Color(0xFF388E3C)],
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-              ),
-              borderRadius: BorderRadius.only(
-                bottomLeft: Radius.circular(30),
-                bottomRight: Radius.circular(30),
-              ),
-            ),
-            child: Column(
-              children: [
-                const Text(
-                  "Farmer Resources",
-                  style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
+    return ResponsivePage(
+      child: Scaffold(
+        backgroundColor: const Color(0xFFF4F9F5),
+        body: Column(
+          children: [
+            // Header Section with Search
+            Container(
+              padding: const EdgeInsets.only(top: 60, bottom: 25, left: 20, right: 20),
+              decoration: const BoxDecoration(
+                gradient: LinearGradient(
+                  colors: [Color(0xFF1B5E20), Color(0xFF388E3C)],
+                  begin: Alignment.topLeft,
+                  end: Alignment.bottomRight,
                 ),
-                const Text("किसान संसाधन केंद्र", style: TextStyle(color: Colors.white70, fontSize: 14)),
-                const SizedBox(height: 20),
-                // SEARCH INPUT
-                Container(
-                  padding: const EdgeInsets.symmetric(horizontal: 15),
-                  decoration: BoxDecoration(
-                    color: Colors.white,
-                    borderRadius: BorderRadius.circular(15),
-                    boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+                borderRadius: BorderRadius.only(
+                  bottomLeft: Radius.circular(30),
+                  bottomRight: Radius.circular(30),
+                ),
+              ),
+              child: Column(
+                children: [
+                  const Text(
+                    "Farmer Resources",
+                    style: TextStyle(fontSize: 24, fontWeight: FontWeight.bold, color: Colors.white),
                   ),
-                  child: TextField(
-                    controller: _searchController,
-                    onChanged: (value) {
-                      setState(() {
-                        searchQuery = value.toLowerCase(); // Updates search in real-time
-                      });
-                    },
-                    decoration: InputDecoration(
-                      hintText: "Search alphabetically... / खोजें...",
-                      prefixIcon: const Icon(Icons.search, color: Color(0xFF1B5E20)),
-                      suffixIcon: searchQuery.isNotEmpty
-                          ? IconButton(
-                          icon: const Icon(Icons.clear, size: 20),
-                          onPressed: () {
-                            _searchController.clear();
-                            setState(() => searchQuery = "");
-                          })
-                          : null,
-                      border: InputBorder.none,
-                      contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                  const Text("किसान संसाधन केंद्र", style: TextStyle(color: Colors.white70, fontSize: 14)),
+                  const SizedBox(height: 20),
+                  // SEARCH INPUT
+                  Container(
+                    padding: const EdgeInsets.symmetric(horizontal: 15),
+                    decoration: BoxDecoration(
+                      color: Colors.white,
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [BoxShadow(color: Colors.black.withOpacity(0.1), blurRadius: 10)],
+                    ),
+                    child: TextField(
+                      controller: _searchController,
+                      onChanged: (value) {
+                        setState(() {
+                          searchQuery = value.toLowerCase(); // Updates search in real-time
+                        });
+                      },
+                      decoration: InputDecoration(
+                        hintText: "Search alphabetically... / खोजें...",
+                        prefixIcon: const Icon(Icons.search, color: Color(0xFF1B5E20)),
+                        suffixIcon: searchQuery.isNotEmpty
+                            ? IconButton(
+                            icon: const Icon(Icons.clear, size: 20),
+                            onPressed: () {
+                              _searchController.clear();
+                              setState(() => searchQuery = "");
+                            })
+                            : null,
+                        border: InputBorder.none,
+                        contentPadding: const EdgeInsets.symmetric(vertical: 15),
+                      ),
                     ),
                   ),
-                ),
-              ],
+                ],
+              ),
             ),
-          ),
-
-          _buildTabs(),
-
-          Expanded(
-            child: PageView(
-              controller: _pageController,
-              onPageChanged: (index) => setState(() => selectedIndex = index),
-              children: [
-                GovernmentSchemesPage(searchQuery: searchQuery),
-                MarketPricesPage(searchQuery: searchQuery),
-                LearningResourcesPage(searchQuery: searchQuery),
-              ],
+      
+            _buildTabs(),
+      
+            Expanded(
+              child: PageView(
+                controller: _pageController,
+                onPageChanged: (index) => setState(() => selectedIndex = index),
+                children: [
+                  GovernmentSchemesPage(searchQuery: searchQuery),
+                  MarketPricesPage(searchQuery: searchQuery),
+                  LearningResourcesPage(searchQuery: searchQuery),
+                ],
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

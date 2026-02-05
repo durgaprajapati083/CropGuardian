@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:croupguardiandurgaprajapati/responsive_page.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
@@ -60,51 +61,53 @@ class _EditProfileScreenState extends State<EditProfileScreen> {
   Widget build(BuildContext context) {
     if (loading)
       return const Scaffold(body: Center(child: CircularProgressIndicator()));
-    return Scaffold(
-      appBar: AppBar(
-        iconTheme: IconThemeData(color: Colors.white),
-        centerTitle: true,
-        title: const Text(
-          "Edit Profile",
-          style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+    return ResponsivePage(
+      child: Scaffold(
+        appBar: AppBar(
+          iconTheme: IconThemeData(color: Colors.white),
+          centerTitle: true,
+          title: const Text(
+            "Edit Profile",
+            style: TextStyle(fontWeight: FontWeight.bold, color: Colors.white),
+          ),
+          backgroundColor: Color(0xFF689F38),
         ),
-        backgroundColor: Color(0xFF689F38),
-      ),
-      body: SingleChildScrollView(
-        child: Column(
-          children: [
-            ProfileHeader(
-              profile: profile!,
-              localImageFile: imageFile,
-              onImagePickTap: () async {
-                XFile? f = await ImagePicker().pickImage(
-                  source: ImageSource.gallery,
-                );
-                if (f != null) setState(() => imageFile = File(f.path));
-              },
-            ),
-            Padding(
-              padding: const EdgeInsets.all(20),
-              child: ProfileForm(
-                formKey: _formKey,
-                nameController: name,
-                emailController: email,
-                phoneController: phone,
-                locationController: location,
-                farmSizeController: farmSize,
-                cropsController: crops,
-                selectedLanguage: lang,
-                onLanguageChanged: (v) => setState(() => lang = v),
+        body: SingleChildScrollView(
+          child: Column(
+            children: [
+              ProfileHeader(
+                profile: profile!,
+                localImageFile: imageFile,
+                onImagePickTap: () async {
+                  XFile? f = await ImagePicker().pickImage(
+                    source: ImageSource.gallery,
+                  );
+                  if (f != null) setState(() => imageFile = File(f.path));
+                },
               ),
-            ),
-          ],
+              Padding(
+                padding: const EdgeInsets.all(20),
+                child: ProfileForm(
+                  formKey: _formKey,
+                  nameController: name,
+                  emailController: email,
+                  phoneController: phone,
+                  locationController: location,
+                  farmSizeController: farmSize,
+                  cropsController: crops,
+                  selectedLanguage: lang,
+                  onLanguageChanged: (v) => setState(() => lang = v),
+                ),
+              ),
+            ],
+          ),
         ),
-      ),
-      bottomNavigationBar: FooterSection(
-        buttonText: "Save Details",
-        onPressed: () {
-          _save();
-        },
+        bottomNavigationBar: FooterSection(
+          buttonText: "Save Details",
+          onPressed: () {
+            _save();
+          },
+        ),
       ),
     );
   }

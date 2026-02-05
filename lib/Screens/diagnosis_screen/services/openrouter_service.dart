@@ -12,42 +12,43 @@ class OpenRouterService {
       await _enforceRateLimit();
       final prompt = _buildPrompt(userDescription);
 
+      // 1. USE THE CONSTANT from AppConstants instead of a hardcoded string
+      // 2. STABLE MODEL RECOMMENDATION: 'google/gemini-flash-1.5' or 'google/gemini-2.0-flash-001'
       final response = await http.post(
         Uri.parse(AppConstants.openRouterApiUrl),
         headers: {
           'Content-Type': 'application/json',
           'Authorization': 'Bearer ${AppConstants.openRouterApiKey}',
-          'HTTP-Referer': 'https://cropguardian.app', // Required for free models
+          'HTTP-Referer': 'https://cropguardian.app',
           'X-Title': 'CropGuardian',
         },
         body: jsonEncode({
-          'model': 'google/gemini-2.0-flash-exp:free', // USE THIS FOR THE DEMO
+          // Change this to a stable model ID
+          'model': 'google/gemini-2.0-flash-001',
           'messages': [
             {
               'role': 'user',
               'content': [
                 {'type': 'text', 'text': prompt},
-                {'type': 'image_url', 'image_url': {'url': imageUrl}},
+                {
+                  'type': 'image_url',
+                  'image_url': {'url': imageUrl} // Your Cloudinary URL
+                },
               ],
             },
           ],
-          'transforms': ['identity'], // Tells OpenRouter not to modify the response
         }),
       ).timeout(const Duration(seconds: 60));
 
       if (response.statusCode == 200) {
         final data = jsonDecode(response.body);
-
-        // IMPROVED EXTRACTION LOGIC
         if (data['choices'] != null && data['choices'].isNotEmpty) {
-          final message = data['choices'][0]['message'];
-          if (message != null && message['content'] != null) {
-            return message['content'].toString();
-          }
+          return data['choices'][0]['message']['content'].toString();
         }
-        // If we reach here, the API gave a 200 but no text
-        throw Exception('AI returned an empty message. Try a different model.');
+        throw Exception('AI returned an empty message.');
       } else {
+        // This will print the exact reason from OpenRouter (e.g., "Model not found")
+        print('Detailed Error Body: ${response.body}');
         throw Exception('API Error: ${response.statusCode}');
       }
     } catch (e) {

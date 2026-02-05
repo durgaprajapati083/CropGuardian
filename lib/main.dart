@@ -2,6 +2,7 @@ import 'package:croupguardiandurgaprajapati/Authentication/login_screen.dart';
 import 'package:croupguardiandurgaprajapati/Screens/diagnosis_screen/viewmodels/diagnosis_viewmodel.dart';
 import 'package:croupguardiandurgaprajapati/firebase_options.dart';
 import 'package:croupguardiandurgaprajapati/splash_screen.dart';
+import 'package:croupguardiandurgaprajapati/webdashboard.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:firebase_core/firebase_core.dart';
 import 'package:flutter/material.dart';
@@ -45,15 +46,42 @@ class _MyAppState extends State<MyApp> {
     print(user?.uid.toString());
   }
   // This widget is the root of your application.
+  // @override
+  // Widget build(BuildContext context) {
+  //   return GetMaterialApp(
+  //     debugShowCheckedModeBanner: false,
+  //     title: 'Crop Guardian',
+  //     theme: ThemeData(
+  //       colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+  //     ),
+  //     home: user !=null ? VibrantFarmerSplash() : LoginScreen(),
+  //   );
+  // }
   @override
   Widget build(BuildContext context) {
     return GetMaterialApp(
       debugShowCheckedModeBanner: false,
       title: 'Crop Guardian',
       theme: ThemeData(
-        colorScheme: .fromSeed(seedColor: Colors.deepPurple),
+        colorScheme: ColorScheme.fromSeed(seedColor: Colors.deepPurple),
       ),
-      home: user !=null ? VibrantFarmerSplash() : LoginScreen(),
+      // We wrap the home logic in a LayoutBuilder
+      home: LayoutBuilder(
+        builder: (context, constraints) {
+          // Check if user is logged in
+          if (user != null) {
+            // IF LOGGED IN: Check screen width
+            if (constraints.maxWidth > 800) {
+              return const WebDashboard(); // Create this for website view
+            } else {
+              return const VibrantFarmerSplash(); //  existing mobile splash/home
+            }
+          } else {
+            // IF NOT LOGGED IN: Show login
+            return const LoginScreen();
+          }
+        },
+      ),
     );
   }
 }
