@@ -1,19 +1,10 @@
-# croupguardiandurgaprajapati
 
-Diagnos the damage crop.
+## Crop Guardian
 
-## Getting Started
+![image alt](https://github.com/durgaprajapati083/CroupGuardian/blob/2e2de7ae529f62be2396b822d900559b3299b8f5/Screenshot%202026-02-01%20122421.png)
 
 This project is a starting point for a Flutter application.
 
-A few resources to get you started if this is your first Flutter project:
-
-- [Lab: Write your first Flutter app](https://docs.flutter.dev/get-started/codelab)
-- [Cookbook: Useful Flutter samples](https://docs.flutter.dev/cookbook)
-
-For help getting started with Flutter development, view the
-[online documentation](https://docs.flutter.dev/), which offers tutorials,
-samples, guidance on mobile development, and a full API reference.
 
 # CropGuardian
 Problem Statement: Tackling Agricultural Challenges for Small Farmers in Developing Regions
